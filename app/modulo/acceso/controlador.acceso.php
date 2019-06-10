@@ -190,7 +190,8 @@ class acceso extends App{
             [merchant_message] => La operación de venta ha sido autorizada exitosamente
             [user_message] => Su compra ha sido exitosa.*/
         if ($charge) {
-            $response = json_decode(json_encode($charge),true)["outcome"];
+            $response = json_decode(json_encode($charge),true);
+            $response = $response["outcome"];
             if ($callback) {
                 return $response;
             }else {
