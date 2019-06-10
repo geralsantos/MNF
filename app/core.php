@@ -52,10 +52,10 @@ if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modu
     require_once (APP . DS . 'core' . DS . 'plantilla.class.php');
     require_once (APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modulo . ".php");
     //UBICAR MODELO
-    if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "modelo." . $modulo . ".php")) {
+    /*if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "modelo." . $modulo . ".php")) {
         require_once (APP . DS . 'modulo' . DS . $modulo . DS . "modelo." . $modulo . ".php");
     }
-    /*$objeto = new $modulo($modulo, $accion, $id);
+    $objeto = new $modulo($modulo, $accion, $id);
     //VALIDAR MÉTODO
     if (method_exists($objeto, $accion)) {
         $objeto->$accion();
