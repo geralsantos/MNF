@@ -186,7 +186,8 @@ function imprimirPDF($variables,$tipo, $estilos){
      //qr
      $tempDir = APP . DS . 'cargas/';
     /* El ruc de la empresa, igv, total, documento cliente, tipocliente(dni o ruc), tipodocumento,serie,correlativo y fecha emision del comprobante*/
-     $codeContents = "$ruc_empresa | 01 | ".explode("-",$serie_cor)[0]." | ".explode("-",$serie_cor)[1]." | ".$variables["total"]." | ".$variables["total_igv"]." | ".$fecha_emision." | 6 | $ruc_cliente |";
+    
+    //$codeContents = "$ruc_empresa | 01 | ".explode("-",$serie_cor)[0]." | ".explode("-",$serie_cor)[1]." | ".$variables["total"]." | ".$variables["total_igv"]." | ".$fecha_emision." | 6 | $ruc_cliente |";
         $fecha_emision_ = date('Y-m-d',strtotime($fecha_emision));
 
             $name_qr = $ruc_cliente."-".$serie_cor.'-'.$fecha_emision_;
