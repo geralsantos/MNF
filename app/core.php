@@ -31,7 +31,7 @@ if(URL_AMIGABLE){
     //ASIGNACION DE LA VARIABLE PRINCIPAL
     (isset($request[2]) and $request[2] != '' and ($acceso or $modulo==MODULO_DEFAULT)) ? $id = $request[2] : $id = NULL;
 }
-/*
+
 //ASIGANCION DEL MODULO
 if(isset($_REQUEST['modulo']) and $_REQUEST['modulo'] != '' and ($acceso or $modulo==MODULO_DEFAULT)){
     $modulo = $_REQUEST['modulo'];
@@ -43,7 +43,7 @@ if(isset($_REQUEST['modulo']) and $_REQUEST['modulo'] != '' and ($acceso or $mod
         $accion = ACCION_DEFAULT;
     }
 }
-
+/*
 //UBICAR CONTROLADOR
 if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modulo . ".php")) {
     include_once (APP . DS . 'libreria' . DS . 'funcion.php');
