@@ -18,12 +18,12 @@ class portada extends App{
     }
     public function list_modulos()
     {
-      $modelo = new modeloPortada();
+      /*$modelo = new modeloPortada();
       $modulos = "SELECT * FROM lgs_modules WHERE state_module = 1";
       $modulos = $modelo->executeQuery( $modulos );
       $tree = $this->buildTree($modulos);
       //$treeHtml = $this->buildTreeHtml($tree);
-      echo json_encode($tree);
+      echo json_encode($tree);*/
         //return $tree;
     }
     public function buildTree($elements, $parentId = 0)
