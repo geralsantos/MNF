@@ -43,7 +43,7 @@ if(isset($_REQUEST['modulo']) and $_REQUEST['modulo'] != '' and ($acceso or $mod
         $accion = ACCION_DEFAULT;
     }
 }
-/*
+
 //UBICAR CONTROLADOR
 if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modulo . ".php")) {
     include_once (APP . DS . 'libreria' . DS . 'funcion.php');
@@ -64,4 +64,4 @@ if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modu
     }
 } else {
     die('Invalid module. Please check the URL.');
-}*/
+}
