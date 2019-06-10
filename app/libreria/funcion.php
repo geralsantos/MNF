@@ -113,7 +113,7 @@ function imprimirPDF($variables,$tipo, $estilos){
     require_once APP . DS . 'core' . DS . 'PDF.class' . '.php';
     require_once APP . DS . 'libreria' . DS . 'phpqrcode/qrlib.php';
 
-    $arr = [];
+    $arr = array();
     $font_size = '11';
     $bg_color_cabecera = '#ffffff';
     $margin_left_right = '0';
@@ -372,7 +372,7 @@ $tipo_archivo   = $_FILES['archivo']['type'];
 $tamano_archivo = $_FILES['archivo']['size'];
 $tmp_archivo    = $_FILES['archivo']['tmp_name'];
 $extension		= pathinfo($nombre_archivo, PATHINFO_EXTENSION);
-$result=[];
+$result=array();
 $fichero_subido = $upload_folder . basename($nombre_archivo);
 if (strtolower($extension) == "xlsx" || strtolower($extension) == "xls")
 {
@@ -381,7 +381,7 @@ if (strtolower($extension) == "xlsx" || strtolower($extension) == "xls")
     $objPHPExcel = PHPExcel_IOFactory::load($fichero_subido);
     $objPHPExcel = $objPHPExcel->setActiveSheetIndex(0);
       //----------Filas----------//
-      $CuentasVer=[];
+      $CuentasVer=array();
       $columna ='A';
       $dia = date('d');
         $mes = date('m');
@@ -393,7 +393,7 @@ if (strtolower($extension) == "xlsx" || strtolower($extension) == "xls")
       for ($column = 2; $column < count($columns); $column++)
       {
         $i=0;
-        $response2=[];
+        $response2=array();
 
         for ($row=1; $row <=$ultimaFila ; $row++)
         {
