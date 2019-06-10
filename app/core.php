@@ -17,7 +17,7 @@ $acceso = TRUE;
 if (REQUIERE_ACCESO) {
   //  (isset($_SESSION['usuario'])) ? $acceso = TRUE : $acceso = FALSE;
 }
-
+/*
 $id = NULL;
 if(URL_AMIGABLE){
     $uri = explode('?', $_SERVER['REQUEST_URI']);
@@ -64,4 +64,4 @@ if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modu
     }
 } else {
     die('Invalid module. Please check the URL.');
-}
+}*/
