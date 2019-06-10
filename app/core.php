@@ -55,13 +55,13 @@ if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modu
     if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "modelo." . $modulo . ".php")) {
         require_once (APP . DS . 'modulo' . DS . $modulo . DS . "modelo." . $modulo . ".php");
     }
-    $objeto = new $modulo($modulo, $accion, $id);
+    /*$objeto = new $modulo($modulo, $accion, $id);
     //VALIDAR MÉTODO
     if (method_exists($objeto, $accion)) {
         $objeto->$accion();
     } else {
         die('Invalid method. Please check the URL.');
-    }
+    }*/
 } else {
     die('Invalid module. Please check the URL.');
 }
