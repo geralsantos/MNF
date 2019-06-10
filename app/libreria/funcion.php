@@ -404,7 +404,7 @@ if (strtolower($extension) == "xlsx" || strtolower($extension) == "xls")
             }else{
               if ($column>1) {
                 $value = $objPHPExcel->getCell($columns[$column].$row)->getCalculatedValue();
-                $response2[] = [($columns[$column].$row),$value];
+                $response2[] = array(($columns[$column].$row),$value);
                 $i++;
               }
             }
