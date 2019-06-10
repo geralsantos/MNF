@@ -2,7 +2,7 @@
 class modeloAcceso extends MySQL{
 
     public function getSesion($usuario, $clave){
-        $usuario = $this->executeQuery("select * from usuario where usuario=:usuario and clave=:clave and activo=1",array("usuario"=>$usuario,"clave"=>$clave));
+        $usuario = $this->executeQuery("select * from usuario where usuario=:usuario and clave=:clave and activo=1",array("usuario"=>$usuario,"clave"=>md5($clave)));
         return $usuario;
     }
     public function getSesionFacebook($id_facebook){
