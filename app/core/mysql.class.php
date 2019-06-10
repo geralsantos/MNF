@@ -31,7 +31,6 @@ class MySQL extends PDO
         $stmt = parent::prepare($query);
 
         if($stmt->execute($params)){
-            print_r($stmt->fetchAll());
           return $stmt->fetchAll();
 
         }else{
