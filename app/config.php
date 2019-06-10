@@ -37,7 +37,7 @@ define( "RUTA_LOGO", 'https://payload220.cargocollective.com/1/2/87981/6711909/l
 define( "RUTA_IMPRESION", SITE_URL_DIR ."portal/index?id_empresa=2&serie_cor=F001-1&monto=5.00&fecha_emision=2018-08-23" );
 define("TIEMPO_OFERTAR_SUBASTA",3);
 //ACCESO A BASE DE DATOS
-define('HOST_BASE_DATOS', '172.16.1.162');
+define('HOST_BASE_DATOS', 'localhost');
 define('NOMBRE_BASE_DATOS', 'db_admin');
 define('USUARIO_BASE_DATOS', 'userweb');
 define('CLAVE_BASE_DATOS', '#Peru*31x');
