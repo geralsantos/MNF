@@ -6,7 +6,7 @@ function siteURL()
         $domainName = $_SERVER['HTTP_HOST'];
         return $protocol.$domainName;*/
         //return "http://".$_SERVER["HTTP_HOST"];
-       return "http://localhost";
+       return "https://dev.peruvian.pe";
     }
 define('DS', DIRECTORY_SEPARATOR);
 //UBICACIONES PRIVADAS
