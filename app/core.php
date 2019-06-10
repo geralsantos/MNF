@@ -52,8 +52,8 @@ if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modu
     require_once (APP . DS . 'core' . DS . 'plantilla.class.php');
     require_once (APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modulo . ".php");
     //UBICAR MODELO
-    /*if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "modelo." . $modulo . ".php")) {
-        require_once (APP . DS . 'modulo' . DS . $modulo . DS . "modelo." . $modulo . ".php");
+    if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "modelo." . $modulo . ".php")) {
+        //require_once (APP . DS . 'modulo' . DS . $modulo . DS . "modelo." . $modulo . ".php");
     }
     $objeto = new $modulo($modulo, $accion, $id);
     //VALIDAR MÉTODO
@@ -61,7 +61,7 @@ if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modu
         $objeto->$accion();
     } else {
         die('Invalid method. Please check the URL.');
-    }*/
+    }
 } else {
     die('Invalid module. Please check the URL.');
 }
