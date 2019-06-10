@@ -58,12 +58,12 @@ class acceso extends App{
     }
     public function facebook(){
       require_once ROOT . '/vendor/autoload.php';
-      $fb = new Facebook\Facebook([
+      $fb = new Facebook\Facebook(array(
         'app_id' => API_ID_FACEBOOK,
         'app_secret' => API_ID_SECRET_FACEBOOK,
         'default_graph_version' => 'v2.6',
         "persistent_data_handler"=>"session"
-        ]);
+        ));
       $helper = $fb->getRedirectLoginHelper();
       try {
         $accessToken = $helper->getAccessToken();
