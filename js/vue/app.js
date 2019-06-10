@@ -40,10 +40,10 @@ Vue.component('bar', {
       listar_menu(){
         console.log("menu-rincipal-portada-index");
         let self = this;
-        axios.get('list_modulos?view').then(function(response){
+        /*axios.get('list_modulos?view').then(function(response){
             console.log(response.data)
             self.rowsmodulos=response.data;
-        });
+        });*/
     },
     mini_clickoutside(e){
       this.mini = !document.getElementById('mini').contains(e.target);
