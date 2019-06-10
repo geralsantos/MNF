@@ -419,11 +419,11 @@ if (strtolower($extension) == "xlsx" || strtolower($extension) == "xls")
       $result=array('Error'=>'','Success'=>$CuentasVer);
     unlink($fichero_subido);
   }else{
-    $result= array('Error' => ["El archivo no ha podido ser leido correctamente, por favor verifique que el archivo excel cumpla con todos los estandares"] );
+    $result= array('Error' => array("El archivo no ha podido ser leido correctamente, por favor verifique que el archivo excel cumpla con todos los estandares") );
   }
 
 }else{
-  $result=array('Error'=>["Solo se permiten archivos de formato excel (.xlsx, .xls)"]);
+  $result=array('Error'=>array("Solo se permiten archivos de formato excel (.xlsx, .xls)"));
 }
 return json_encode($result);
 }
