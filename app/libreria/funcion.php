@@ -53,9 +53,9 @@ function queryArray($query)
 
 function enviarCorreo($variables, $to, $subject = "Empresa.com", $body = "", $adjunto = ''){
 
-    require_once APP . DS . 'libreria' . DS . 'class.phpmailer.php';
-    require_once APP . DS . 'libreria' . DS . 'fpdf181/fpdf.php';
-    require_once APP . DS . 'core' . DS . 'PDF.class' . '.php';
+    require_once(APP . DS . 'libreria' . DS . 'class.phpmailer.php');
+    require_once(APP . DS . 'libreria' . DS . 'fpdf181/fpdf.php');
+    require_once(APP . DS . 'core' . DS . 'PDF.class' . '.php');
 
 
     /* EMAIL SETTING */
