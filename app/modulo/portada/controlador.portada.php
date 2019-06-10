@@ -6,7 +6,10 @@ ini_set('display_errors', 'Off');
 error_reporting();
 class portada extends App{
     public function index(){
-    echo "geral";
+      if(!isset($_SESSION["usuario"])){
+          $this->vista->reenviar("index", "acceso");
+      }
+      $this->vista->setTitle("Inicio");
     }
     public function cerrar(){
       unset($_SESSION);
