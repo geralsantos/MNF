@@ -1,37 +1,6 @@
-<!doctype html>
-<html class="no-js" lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title><?php echo NOMBRE_PAGINA?></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- favicon
-		============================================ -->
-    <link rel="shortcut icon" type="image/x-icon" href="<?php echo ASSETS ?>/img/favicon.ico">
-    <!-- Google Fonts
-		============================================ -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,900" rel="stylesheet">
-
-    <!-- main CSS
-		============================================ -->
-
-    <!-- style CSS
-		============================================ -->
-    <link rel="stylesheet" href="<?php echo ASSETS ?>/style.css">
-
-    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-</head>
-
-<body>
-  
-<div class="" id="vue_app">
-        <v-app>
-            <v-toolbar color="white" grey>
+<template>
+    <div>
+        <v-toolbar color="white" grey>
                 <v-toolbar-side-icon @click.stop="mini = !mini" style="margin-left:66px !important;">
                 </v-toolbar-side-icon>
 
@@ -39,6 +8,9 @@
 
                 <v-spacer></v-spacer>
 
+                <v-btn icon>
+                    <v-icon>search</v-icon>
+                </v-btn>
             </v-toolbar>
 
             <template>
@@ -124,6 +96,67 @@
                 </v-hover>
             </template>
             <div class="main-body" v-bind:class="{'sidenav-close':!sidenavopen}">
-              <router-view></router-view> 
+                    <router-view></router-view>
             </div>
-    </v-app>
+    </div>
+</template>
+<script>
+export default {
+    name:'app',
+    data: () => ({
+      overlay:false,
+      title_modulo:null,
+      sidenavopen:"true",
+      drawer: true,
+        mini: true,
+        right: null,
+        rowsmodulos:[],
+    }),
+    created:function(){
+    },mounted:function(){
+      this.listar_menu();
+      window.addEventListener('click',this.mini_clickoutside);
+      this.action_modulos_activos();
+    },
+    watch:{
+     
+    },
+    methods: {
+      listar_menu(){
+        console.log("menu-rincipal-portada-index");
+        let self = this;
+        /*axios.get('list_modulos?view').then(function(response){
+            console.log(response.data)
+            self.rowsmodulos=response.data;
+        });*/
+    },
+    mini_clickoutside(e){
+      this.mini = !document.getElementById('mini').contains(e.target);
+    },
+    action_modulos_activos(){
+      var btns = document.querySelectorAll(".theme--dark.v-list .v-list__tile--link");
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener("click", function() {
+          console.log(this.getAttribute("href"));
+          if (this.getAttribute("href")!="#") {
+            for (var x = 0; x < btns.length; x++) {
+              if (this.getAttribute("href")!=btns[x].getAttribute("href")) {
+                btns[x].classList.remove("active-menu-option");
+              }
+            }
+            this.className += " active-menu-option";
+          }
+        });
+      }
+    },
+      toggleMenu () {
+        this.menuVisible = !this.menuVisible;
+      },
+      changeview(val){
+        this.currentView=val;
+          //document.querySelector('.comprobantesestado').style.display= (val!="portadaindex"?'none':'');
+      },
+    }
+}
+</script>
+

@@ -3,7 +3,7 @@
   Vue.use(VueRouter);
   //Vue.http.options.emulateJSON=true; // http client
   const router = new VueRouter({
-    mode: 'hash',
+    mode: 'history',
     routes: [
       { path: '/', component: null }
     ]

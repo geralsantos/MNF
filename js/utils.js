@@ -97,15 +97,15 @@
   document.addEventListener('DOMContentLoaded', function() {
     
      
-    var type = (window.location.hash.substr(1)=="_=_"?'portada-index':window.location.hash.substr(1));
+    //var type = (window.location.hash.substr(1)=="_=_"?'portada-index':window.location.hash.substr(1));
      // appVue.changeview(type);
-      window.location.hash='#'+type;
+     /* window.location.hash='#'+type;
       window.onhashchange= function(){
         var type = window.location.hash.substr(1);
         if (!isempty(type)) {
-          appVue.changeview(type);
+          //appVue.changeview(type);
         }
-      }
+      }*/
     /*  $('.metismenu').click(function(){
         if ($('.metismenu .has-arrow:hover').attr("aria-expanded")=="true") {
           $('.metismenu .has-arrow:hover').attr("aria-expanded",false);

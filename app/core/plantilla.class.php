@@ -28,10 +28,13 @@ class Plantilla {
     function getFooter() {
         if ($this->html and !$this->json and file_exists(APP . DS . 'plantilla' . DS . "footer.php")) {
             include(APP . DS . 'plantilla' . DS . "footer.php");
-                foreach (glob(APP . DS . 'plantilla' . DS ."templates/*.php") as $filename)
-                {
-                    include($filename );
-                }
+                /*foreach (glob(APP . DS . 'modulo' . DS ."*") as $filename) {
+                    if (!strpos($filename, 'acceso')) {
+                        foreach (glob($filename.DS."vista.*.php") as $filename_) {
+                            include($filename_);
+                        }
+                    }
+                }*/
             include(APP . DS . 'plantilla' . DS . "end_footer.php");
         }
     }
@@ -197,22 +200,22 @@ class Plantilla {
             extract(get_object_vars($params));
         }
         $this->getHeader();
-        if (file_exists(APP . DS . 'modulo' . DS . $this->modulo . DS . "vista." . $this->modulo . '.' . $this->accion . ".php")) {
+        /*if (file_exists(APP . DS . 'modulo' . DS . $this->modulo . DS . "vista." . $this->modulo . '.' . $this->accion . ".php")) {
             include(APP . DS . 'modulo' . DS . $this->modulo . DS . "vista." . $this->modulo . '.' . $this->accion . ".php");
         }else{
             die('Invalid view.'.APP . DS . 'modulo' . DS . $this->modulo . DS . "vista." . $this->modulo . '.' . $this->accion . ".php");
-        }
+        }*/
         $this->getFooter();
     }
     public function setView($params = NULL) {
         if (!is_null($params)) {
             extract(get_object_vars($params));
         }
-        if (file_exists(APP . DS . 'modulo' . DS . $this->modulo . DS . "vista." . $this->modulo . '.' . $this->accion . ".php")) {
+       /* if (file_exists(APP . DS . 'modulo' . DS . $this->modulo . DS . "vista." . $this->modulo . '.' . $this->accion . ".php")) {
             include(APP . DS . 'modulo' . DS . $this->modulo . DS . "vista." . $this->modulo . '.' . $this->accion . ".php");
         }else{
             die('Invalid view.'.APP . DS . 'modulo' . DS . $this->modulo . DS . "vista." . $this->modulo . '.' . $this->accion . ".php");
-        }
+        }*/
     }
 /*
     public function MensajeAletaExito($text){

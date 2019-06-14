@@ -19,6 +19,10 @@
 /*----------------------------------------*/
 /*  1.  Theme default CSS
 /*----------------------------------------*/
+header, main, footer, .top-nav, .main-body {
+    margin-left: 85px;
+    margin-top: 8px;
+  }
 html, body {height: 100%; font-family: 'Roboto', sans-serif;font-weight:400;background:#3973ac;}
 .floatleft {float:left}
 .floatright {float:right}

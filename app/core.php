@@ -60,8 +60,19 @@ if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modu
     if (method_exists($objeto, $accion)) {
         $objeto->$accion();
     } else {
+        ob_start();
+        include('404.php');
+        $contenido = ob_get_contents();
+        ob_end_clean();
+        echo $contenido;
+        //include('400.shtml');
         die('Invalid method. Please check the URL.');
     }
 } else {
+    ob_start();
+         include('404.php');
+        $contenido = ob_get_contents();
+        ob_end_clean();
+        echo $contenido;
     die('Invalid module. Please check the URL.');
 }
