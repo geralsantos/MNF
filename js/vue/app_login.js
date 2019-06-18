@@ -1,17 +1,8 @@
-{
-  'use strict';
-  Vue.use(VueRouter);
+
   //Vue.http.options.emulateJSON=true; // http client
-  const router = new VueRouter({
-    mode: 'history',
-    routes: [
-      { path: '/', component: null }
-    ]
-});
+
   var appLogin = new Vue({
     el:'#vue_app_login', /* container vue */
-    name:'Reveal',
-    router,
     data: () => ({
       user: {
         // email: 'admin@example.com',
@@ -57,9 +48,5 @@
           swal("Error","Debe llenar todos los campos","warning");
         }
       }
-      
-      
     }
   })
-  
-}

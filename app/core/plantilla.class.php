@@ -24,7 +24,53 @@ class Plantilla {
             }
             
     }
+    function init_app(){
+        require_once (APP . DS . 'modulo' . DS . 'tuua_application' . DS . "modelo.tuua_application.php");
+        $modelo = new modeloTuua_application();
+        $usuario = $_REQUEST["usuario"];
+        
+        //$passwd = $_REQUEST["contrasena"];
+        $passwd = '03ca0d22908bc2332d778a733517f288';
+        $ip = $_SERVER['REMOTE_ADDR']; 
+        $iduser = $modelo->UserLogin($usuario, $passwd);
+        if (!$iduser) {
+            unset($_SESSION);
+            session_destroy();
+            $this->reenviar("index", "acceso");
+        }
 
+        require_once (APP . DS . 'modulo' . DS . 'tuua_application' . DS . "controlador.tuua_application.php");
+        $controlador = new tuua_application($this->modulo, $this->accion, $id=NULL);
+
+        $session = $controlador->getStamp();
+        $idSession = $modelo->AddSession($session, $usuario, $iduser, $ip, 0);
+        $valoressession = $modelo->get_session($session);
+        $valoresuser = $modelo->get_user($iduser);
+
+        if ($valoressession["id"]>0) {
+            $valoresuser["valores"] = $valoresuser["valores"][0];
+
+            $_SESSION['usuario_ini'] = strtoupper($valoresuser["valores"]["usuario"]);
+            $_SESSION['ck_usuario_nom'] = $valoresuser["valores"]["nombre"] . " " . $valoresuser["valores"]["apellido"];
+            $_SESSION['ck_usuario_per'] = $valoresuser["valores"]["nombre_perfil"];
+            $_SESSION['ck_usuario_perc'] = $valoresuser["valores"]["id_perfil"];
+            $_SESSION['ck_id_usuario_ini'] = $valoresuser["valores"]["idusuario"];
+            $_SESSION['ck_id_usuario'] = $valoresuser["valores"]["idusuario"];
+            $_SESSION['ck_usuario_ini'] = $valoresuser["valores"]["usuario"];
+            $_SESSION['ck_usuario_mob'] = $valoressession["mobile"];
+
+            /*if ($valoresuser["mobile"]){
+            //header("location: http://intranet.peruvian.pe/app/inicio");
+            $this->vista->reenviar("index");
+            header("location: https://dev.peruvian.pe/intranet/app/inicio");
+            
+                }else{
+            header("location:app_main.php?app=menu");
+                }*/
+        }
+        // $this->cerrar();
+        //return $response;*/
+    }
     function getFooter() {
         if ($this->html and !$this->json and file_exists(APP . DS . 'plantilla' . DS . "footer.php")) {
             include(APP . DS . 'plantilla' . DS . "footer.php");

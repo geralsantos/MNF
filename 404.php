@@ -144,7 +144,7 @@ body {
         <h1>Oops!</h1>
         <br>
         <br>
-				<h2>404 - Invalid module. Please check the URL.</h2>
+				<h2><?php echo $msj?></h2>
 			</div>
 			<a href="/MNF/">Ir a la vista principal.</a>
 		</div>

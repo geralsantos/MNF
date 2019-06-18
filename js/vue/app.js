@@ -19,15 +19,14 @@ import router from './routes.js';
     this.listar_menu();
     window.addEventListener('click',this.mini_clickoutside);
     this.action_modulos_activos();
-    var self = this;
-    setTimeout(() => {
-      self.currentView = 'portada-index';
-    }, 3000);
   },
   watch:{
    
   },
   methods: {
+    cerrar(){
+      window.location.assign('/MNF/acceso/cerrar');
+    },
     listar_menu(){
       console.log("menu-rincipal-portada-index");
       let self = this;

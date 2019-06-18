@@ -58,21 +58,27 @@ if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modu
     $objeto = new $modulo($modulo, $accion, $id);
     //VALIDAR MÉTODO
     if (method_exists($objeto, $accion)) {
+        if (isset($_REQUEST["usuario"]) and $_REQUEST["usuario"]!="" and isset($_REQUEST["contrasena"]) and $_REQUEST["contrasena"]!="") {
+            $p = new Plantilla($modulo, $accion, $id);
+            $p->init_app();
+        }
         $objeto->$accion();
     } else {
         ob_start();
+        $msj = 'Invalid method. Please check the URL.';
         include('404.php');
         $contenido = ob_get_contents();
         ob_end_clean();
         echo $contenido;
         //include('400.shtml');
-        die('Invalid method. Please check the URL.');
+        die();
     }
 } else {
     ob_start();
+    $msj = 'Invalid module. Please check the URL.';
          include('404.php');
         $contenido = ob_get_contents();
         ob_end_clean();
         echo $contenido;
-    die('Invalid module. Please check the URL.');
+    die();
 }

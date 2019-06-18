@@ -28,5 +28,7 @@
     "webpack-cli": "^3.3.4",
     "webpack-dev-server": "^3.7.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "vue-bootstrap-datetimepicker": "^5.0.1"
+  }
 }
