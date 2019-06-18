@@ -58,7 +58,7 @@
 
 export default {
     name: 'ta_listado_vuelos_kiu',
-    props:[''],
+    props:['idFileTuuaUno','fecha_ini','fecha_fin','origen'],
     components: { },
     data:()=>({
         cabeceraFile:[],
@@ -67,16 +67,21 @@ export default {
     created:function(){
      },
     mounted:function(){
-        //this.init_ta_listado_vuelos_kiu();
+        this.init_ta_listado_vuelos_kiu();
     },
     methods:{
         init_ta_listado_vuelos_kiu(){
-            var self = this;
-            axios.get('init_ta_listado_vuelos_kiu?view').then(function(response){
-                let data = response.data;
-                console.log(data)
-                self.cabeceraFile = data.data;
-            });
+            var self = this; 
+            axios({
+                method: 'POST',
+                url: 'init_ta_listado_vuelos_kiu?view',
+                params: {idFileTuuaUno:'',txtpasajero:'',fecha1:this.fecha_ini,fecha2:this.fecha_fin,origen:this.origen}
+            }).then((response) => {
+                    let data = response.data;
+                    console.log(data)
+                    self.cabeceraFile = data.data;
+            })
+            .catch((error) => error);
         },
         CrearManifiesto(){
 

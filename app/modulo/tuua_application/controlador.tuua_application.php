@@ -2,8 +2,8 @@
 date_default_timezone_set('America/Lima');
 ini_set('max_execution_time',0);
 ini_set('memory_limit', '300M');
-/*ini_set('display_errors', 'Off');
-error_reporting();*/
+ini_set('display_errors', 'Off');
+error_reporting();
 class tuua_application extends App{
     public function index(){
       if(!isset($_SESSION["usuario"])){

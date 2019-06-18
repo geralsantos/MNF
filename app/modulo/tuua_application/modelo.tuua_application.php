@@ -55,7 +55,7 @@ class modeloTuua_application extends MySQL{
             FROM tuuaCabeceraFile c
             LEFT JOIN tuuaPasajerosFile p ON c.idFileTuua=p.idFileTuua
             LEFT JOIN tuuaEstados e on e.estado = c.Estado
-            WHERE STR_TO_DATE(c.fecVueloTip,'%d/%m/%Y') >=:fecVueloTip AND  STR_TO_DATE(c.fecVueloTip,'%d/%m/%Y') <=:fecVueloTip2 and c.aeroEmbarque='" . $origen . "' and e.estado<>3 GROUP BY 1 ORDER BY 11, 3";
+            WHERE STR_TO_DATE(c.fecVueloTip,'%d/%m/%Y') >=:fecVueloTip AND  STR_TO_DATE(c.fecVueloTip,'%d/%m/%Y') <=:fecVueloTip2 and c.aeroEmbarque=:aeroEmbarque and e.estado<>3 GROUP BY 1 ORDER BY 11, 3";
         }
         else
         {
@@ -67,7 +67,8 @@ class modeloTuua_application extends MySQL{
             LEFT JOIN tuuaEstados e on e.estado = c.Estado
             WHERE STR_TO_DATE(c.fecVueloTip,'%d/%m/%Y') >=:fecVueloTip AND  STR_TO_DATE(c.fecVueloTip,'%d/%m/%Y') <=:fecVueloTip2 and e.estado<>3 GROUP BY 1 ORDER BY 11, 3";
         }
-        $response = $this->executeQuery( $sql,array("fecVueloTip"=>$fe1,"fecVueloTip2"=>$fe2,"aeroEmbarque") );
+        
+        $response = $this->executeQuery( $sql,array("fecVueloTip"=>$fe1,"fecVueloTip2"=>$fe2,"aeroEmbarque"=>$origen) );
         return $response;
     }
 }

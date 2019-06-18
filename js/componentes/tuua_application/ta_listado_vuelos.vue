@@ -54,7 +54,7 @@
           </form>
          
         <!--<div id="busca_vuelos"> &nbsp; </div>-->
-        <talistadovueloskiu v-if="showtalistadovueloskiu"></talistadovueloskiu>
+        <talistadovueloskiu v-if="showtalistadovueloskiu" :idFileTuuaUno="false" :fecha_ini="fecha_ini" :fecha_fin="fecha_fin" :origen="origen"></talistadovueloskiu>
     <input type="hidden" name="idFileTuua" id="idFileTuua" v-model="idFileTuua">
     </div>
   </div>
