@@ -10,8 +10,8 @@
     <link rel="shortcut icon" type="image/x-icon" href="<?php echo ASSETS ?>/img/favicon.ico">
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,900" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo ASSETS?>/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/pc-bootstrap4-datetimepicker@4.17.50/build/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="<?php echo ASSETS?>/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="<?php echo ASSETS;?>/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="<?php echo CSS?>/plantilla.css">
     <link rel="stylesheet" href="<?php echo CSS?>/peruvian.css">
 </head>
