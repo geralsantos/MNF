@@ -29,6 +29,7 @@
     "webpack-dev-server": "^3.7.1"
   },
   "dependencies": {
+    "sweetalert2": "^8.12.2",
     "vue-bootstrap-datetimepicker": "^5.0.1"
   }
 }

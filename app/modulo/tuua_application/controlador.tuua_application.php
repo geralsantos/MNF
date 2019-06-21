@@ -16,7 +16,6 @@ class tuua_application extends App{
       session_destroy();
       $this->vista->reenviar("index");
     }
-    
     public function getStamp(){
       $now = (string)microtime();
       $now = explode(' ', $now);
@@ -109,5 +108,75 @@ class tuua_application extends App{
     $response = $modelo->tuua_cabecera(array("origen"=>$origen,"fe1"=>$fe1,"fe2"=>$fe2));
 
     echo json_encode(array("data"=>$response));
+  }
+  public function AdpController(){
+    require_once("clases/EnviarTuaDAO.php");
+    $flag = isset($_REQUEST["flag"])?$_REQUEST["flag"]:"";
+    if($flag=="CrearManifiesto"){
+      $etd=new EnviarTuaDAO();
+      $fecha_vuelo=$_REQUEST["fecha_vuelo"];
+      $nro_vuelo=$_REQUEST["nro_vuelo"];
+      $origen=$_REQUEST["origen"];
+      $hora_despegue=$_REQUEST["hora_despegue"];
+      $hora_cierra_despegue=$_REQUEST["hora_cierra_despegue"];
+      $hora_llegada_destino=$_REQUEST["hora_llegada_destino"];
+      $matricula_avion=$_REQUEST["matricula_avion"];
+      try {
+        $result = $etd->insertarCabecera($fecha_vuelo,$nro_vuelo,$origen,$hora_despegue,$hora_cierra_despegue,$hora_llegada_destino,$matricula_avion);			
+        if (!$result) {
+          new Exception("Ha ocurrido un error al insertar los registros");
+        }
+      } catch (Exception $e) {
+        echo json_encode(array("result"=>"Error","mensaje"=>$e,"icon"=>"error"));
+      }
+      echo json_encode(array("result"=>"Completado","mensaje"=>"Ha terminado el proceso con éxito","icon"=>"success"));
+    }
+    if($flag=="ImportarPax")
+    {
+      $etd=new EnviarTuaDAO();	
+      $idFileTuua=$_REQUEST["idFileTuua"];
+      $FechaUso=$_REQUEST["Fecha"];
+      $LocOrigen=$_REQUEST["aeroEmbarque"];
+      $LocDestino=$_REQUEST["LocDestino"];
+      $NroVuelo=substr($_REQUEST["nroVuelo"], -4);
+
+      $etd->importarPax($idFileTuua,$FechaUso,$LocOrigen,$LocDestino,(int)$NroVuelo);
+   }
+    if($flag=="EliminarManifiesto"){
+      $etd=new EnviarTuaDAO();
+      $idFileTuua=$_REQUEST["idFileTuua"];
+      try {
+        $result = $etd->EliminarManifiesto($idFileTuua);
+        if (!$result) {
+          new Exception("El manifiesto no ha podido ser eliminado");
+        }
+      } catch (Exception $th) {
+        echo json_encode(array("result"=>"Error","mensaje"=>$e,"icon"=>"error"));
+      }
+      echo json_encode(array("result"=>"Completado","mensaje"=>"El manifiesto ha sido eliminado.","icon"=>"success"));
+    }
+    if($flag=="ActualizarManifiesto"){
+      
+      $etd=new EnviarTuaDAO();	
+      $idFileTuua=$_REQUEST["idFileTuua"];
+      $hora_despegue=$_REQUEST["hora_despegue"];
+      $hora_cierra_despegue=$_REQUEST["hora_cierra_despegue"];
+      $hora_llegada_destino=$_REQUEST["hora_llegada_destino"];
+      $matricula_avion=$_REQUEST["matricula_avion"];
+      $params = array("hora_despegue"=>$hora_despegue,"hora_cierra_despegue"=>$hora_cierra_despegue,"hora_llegada_destino"=>$hora_llegada_destino,"matricula_avion"=>$matricula_avion);
+      try {
+        $result = $etd->ActualizarManifiesto($idFileTuua,$params);
+        if (!$result) {
+          new Exception("Ha ocurrido un error al actualizar el manifiesto, intentelo más tarde.");
+        }
+      } catch (Exception $e) {
+        echo json_encode(array("result"=>"Error","mensaje"=>$e,"icon"=>"error"));
+      }
+      echo json_encode(array("result"=>"Completado","mensaje"=>"Ha terminado el proceso con éxito","icon"=>"success"));
+    }
+
+    //require_once("clases/EnviarTuaDAO.php");
+    //require_once("clases/EnviarTuaCORPAC.php");
+    //require_once("clases/EnviarTuaAAP.php");
   }
 }

@@ -51,7 +51,7 @@ class modeloTuua_application extends MySQL{
         {
             $sql="SELECT c.idFileTuua, c.nombreArchivo, c.nroVuelo, c.fecVueloTip, c.aeroEmbarque, p.destinoPax, c.IdManifiesto,
             (SELECT COUNT(*) FROM tuuaPasajerosFile WHERE idFileTuua=c.idFileTuua and estado=1) Pax, e.nombre as Estado, c.Estado as nEstado,
-            STR_TO_DATE(c.fecVueloTip,'%d/%m/%Y') Fecha
+            STR_TO_DATE(c.fecVueloTip,'%d/%m/%Y') Fecha,c.horaCierrePuerta,c.horaCierreDespegue,c.horaLlegadaDestino,c.matriculaAvion
             FROM tuuaCabeceraFile c
             LEFT JOIN tuuaPasajerosFile p ON c.idFileTuua=p.idFileTuua
             LEFT JOIN tuuaEstados e on e.estado = c.Estado
@@ -61,7 +61,7 @@ class modeloTuua_application extends MySQL{
         {
             $sql="SELECT c.idFileTuua, c.nombreArchivo, c.nroVuelo, c.fecVueloTip, c.aeroEmbarque, p.destinoPax, c.IdManifiesto,
             (SELECT COUNT(*) FROM tuuaPasajerosFile WHERE idFileTuua=c.idFileTuua and estado=1) Pax, e.nombre as Estado, c.Estado as nEstado,
-            STR_TO_DATE(c.fecVueloTip,'%d/%m/%Y') Fecha
+            STR_TO_DATE(c.fecVueloTip,'%d/%m/%Y') Fecha,c.horaCierrePuerta,c.horaCierreDespegue,c.horaLlegadaDestino,c.matriculaAvion
             FROM tuuaCabeceraFile c
             LEFT JOIN tuuaPasajerosFile p ON c.idFileTuua=p.idFileTuua
             LEFT JOIN tuuaEstados e on e.estado = c.Estado
@@ -70,5 +70,12 @@ class modeloTuua_application extends MySQL{
         
         $response = $this->executeQuery( $sql,array("fecVueloTip"=>$fe1,"fecVueloTip2"=>$fe2,"aeroEmbarque"=>$origen) );
         return $response;
+    }
+    public function EliminarManifiesto($idTuuaFile){
+        if (!$sql = $this->updateData("tuuaCabeceraFile", array("Estado"=>3), array("idFileTuua"=>$idTuuaFile))) {
+            return false;
+        }
+        echo "El manifiesto ha sido eliminado.";
+        return true;
     }
 }
