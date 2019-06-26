@@ -1,7 +1,7 @@
 <template id="modalComponent">
     <div class="" >  
 
-   <div class="modal fade" id="modalCrearEditarManifiesto" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+   <div class="modal fade" :id="idmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -25,7 +25,7 @@
 
 export default {
     name: 'modalComponent',
-    props:['titulo_modal'],
+    props:['titulo_modal','idmodal'],
     components: { },
     data:()=>({
      }),

@@ -78,4 +78,32 @@ class modeloTuua_application extends MySQL{
         echo "El manifiesto ha sido eliminado.";
         return true;
     }
+    public function ListarCabeceraTuua($idFileTuua){
+        $cabecera="SELECT idFileTuua,fecVueloTip,aeroEmbarque,nombreArchivo,nroVuelo,matriculaAvion,Estado FROM tuuaCabeceraFile  WHERE idFileTuua=:idFileTuua";
+        $cabecera= $this->executeQuery( $cabecera,array("idFileTuua"=>$idFileTuua) );
+        return $cabecera;
+    }
+    public function ListarPasajero($idFileTuua){
+        $pasajeros="SELECT idItensPax,nroTicketPax,apellidoPax,nombrePax,tipoPax,foidPax,destinoPax,clasePax,nroCuponPax,nroReferencia,nroAsientoPax,nroDoc,nacPax,tres,Estado FROM tuuaPasajerosFile  WHERE idFileTuua=:idFileTuua and estado=:estado";
+        $pasajeros= $this->executeQuery( $pasajeros,array("idFileTuua"=>$idFileTuua,"estado"=>1) );
+        return $pasajeros;
+    }
+    public function UpdatePasajero($id,$values){
+       
+        if (!$sql = $this->updateData("tuuaPasajerosFile",$values, array("idItensPax"=>$id))) {
+            return false;
+        }
+         
+        return true;
+    }
+    public function EliminarPasajero($idItensPax){
+        if (!$sql = $this->updateData("tuuaPasajerosFile",array("estado" => "0","categoria_Pax" => "T"), array("idItensPax"=>$idItensPax))) {
+            return false;
+        }
+        return true;
+    }
+    public function CrearPasajero($values) {
+        $sql = $this->insertData("tuuaPasajerosFile",$values);
+        return $sql;
+    }
 }

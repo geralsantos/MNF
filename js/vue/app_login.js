@@ -1,6 +1,4 @@
-
   //Vue.http.options.emulateJSON=true; // http client
-
   var appLogin = new Vue({
     el:'#vue_app_login', /* container vue */
     data: () => ({

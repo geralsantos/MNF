@@ -1,6 +1,11 @@
 
   
 const self = {
+  removeSpaces:(texto)=>{
+    texto=texto.trim();
+    texto=texto.replace(/\s/g, '');
+    return texto;
+  },
   download : (filename, text)=> {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:application/xml;charset=utf-8,' + encodeURIComponent(text));

@@ -28,6 +28,38 @@ class tuua_application extends App{
   }
 
   public function ta_listado_vuelos(){}
+  public function ta_listado_pax(){}
+  
+  public function init_ta_listado_pax(){
+    $idFileTuua = isset($_REQUEST["id_file"])?$_REQUEST["id_file"]:"";
+    if (!empty($idFileTuua)) {
+      $modelo = new modeloTuua_application();
+      $cabecera= $modelo->ListarCabeceraTuua( $idFileTuua);
+      $pasajeros= $modelo->ListarPasajero($idFileTuua);
+      $cantidad_pax = $pasajeros;
+      $arr_pax=array();$repeat_pax=array();
+      foreach ($cantidad_pax as $key => $pax) {
+        if (in_array_r($pax["nroTicketPax"], $arr_pax) ) {
+          $pax["color"]="red";
+          $repeat_pax[]=$pax;
+        }else {
+          $arr_pax[]=$pax;
+        }
+      }
+      $apellidoPax = array();
+      foreach ($arr_pax as $pax) {
+        $apellidoPax[] = $pax['apellidoPax'];
+      }
+      array_multisort($apellidoPax, SORT_ASC, $arr_pax);
+      array_multisort($apellidoPax, SORT_ASC, $repeat_pax);
+
+      $cantidad_pax = array_merge($repeat_pax,$arr_pax);
+      $data=array("cabecera"=>$cabecera,"cantidad_pax"=>$cantidad_pax,"id_file"=>$idFileTuua);
+      echo json_encode($data);
+    }else{
+      $this->vista->reenviar("ta_listado_vuelos");
+    }
+  }
   public function init_listado_vuelos(){
     $modelo = new modeloTuua_application();
     $sql="SELECT * FROM usuario u  WHERE u.idusuario=:idusuario";
@@ -109,27 +141,75 @@ class tuua_application extends App{
 
     echo json_encode(array("data"=>$response));
   }
+  public function CrearManifiesto(){
+    $etd=new EnviarTuaDAO();
+    $fecha_vuelo=$_REQUEST["fecha_vuelo"];
+    $nro_vuelo=$_REQUEST["nro_vuelo"];
+    $origen=$_REQUEST["origen"];
+    $hora_despegue=$_REQUEST["hora_despegue"];
+    $hora_cierra_despegue=$_REQUEST["hora_cierra_despegue"];
+    $hora_llegada_destino=$_REQUEST["hora_llegada_destino"];
+    $matricula_avion=$_REQUEST["matricula_avion"];
+    try {
+      $result = $etd->insertarCabecera($fecha_vuelo,$nro_vuelo,$origen,$hora_despegue,$hora_cierra_despegue,$hora_llegada_destino,$matricula_avion);
+      if (!$result) {
+        new Exception("Ha ocurrido un error al insertar los registros");
+      }
+    } catch (Exception $e) {
+      echo json_encode(array("result"=>"Error","mensaje"=>$e,"icon"=>"error"));
+    }
+    echo json_encode(array("result"=>"Completado","mensaje"=>"Ha terminado el proceso con éxito","icon"=>"success"));
+  }
+  public function Actualizar(){
+    $etd=new EnviarTuaDAO();	
+    $idFileTuua=$_REQUEST["idFileTuua"];
+    $hora_despegue=$_REQUEST["hora_despegue"];
+    $hora_cierra_despegue=$_REQUEST["hora_cierra_despegue"];
+    $hora_llegada_destino=$_REQUEST["hora_llegada_destino"];
+    $matricula_avion=$_REQUEST["matricula_avion"];
+    $params = array("hora_despegue"=>$hora_despegue,"hora_cierra_despegue"=>$hora_cierra_despegue,"hora_llegada_destino"=>$hora_llegada_destino,"matricula_avion"=>$matricula_avion);
+    try {
+      $result = $etd->ActualizarManifiesto($idFileTuua,$params);
+      if (!$result) {
+        new Exception("Ha ocurrido un error al actualizar el manifiesto, intentelo más tarde.");
+      }
+    } catch (Exception $e) {
+      echo json_encode(array("result"=>"Error","mensaje"=>$e,"icon"=>"error"));
+    }
+    echo json_encode(array("result"=>"Completado","mensaje"=>"Ha terminado el proceso con éxito","icon"=>"success"));
+  }
+  public function ReprocesarManifiesto(){
+    $etd=new EnviarTuaDAO();
+    $etc=new EnviarTuaCORPAC();
+    $eta=new EnviarTuaAAP();
+    try {
+      switch ($_REQUEST["embarque"]) {
+        case "CUZ": $etc->ReprocesarCORPAC($_REQUEST["id_file"]); break;
+        case "PIU": $etd->Reprocesar($_REQUEST["id_file"]); break;
+        case "IQT": $etd->Reprocesar($_REQUEST["id_file"]); break;
+        case "PCL": $etd->Reprocesar($_REQUEST["id_file"]); break;
+        case "TPP": $etd->Reprocesar($_REQUEST["id_file"]); break;
+        case "AQP": $eta->ReprocesarAAP($_REQUEST["id_file"]); break;
+        case "TCQ": $eta->ReprocesarAAP($_REQUEST["id_file"]); break;
+        default: echo "No se puede Reprocesar este Manifiesto";
+      }
+    } catch (Exception $e) {
+      echo json_encode(array("result"=>"Error","mensaje"=>$e,"icon"=>"error"));
+    }
+    echo json_encode(array("result"=>"Completado","mensaje"=>"Ha terminado el proceso con éxito","icon"=>"success"));
+    return;
+  }
   public function AdpController(){
     require_once("clases/EnviarTuaDAO.php");
+    require_once("clases/EnviarTuaCORPAC.php");
+    require_once("clases/EnviarTuaAAP.php");
+
     $flag = isset($_REQUEST["flag"])?$_REQUEST["flag"]:"";
+    if($flag=="Reprocesar"){
+      $this->ReprocesarManifiesto();
+    }
     if($flag=="CrearManifiesto"){
-      $etd=new EnviarTuaDAO();
-      $fecha_vuelo=$_REQUEST["fecha_vuelo"];
-      $nro_vuelo=$_REQUEST["nro_vuelo"];
-      $origen=$_REQUEST["origen"];
-      $hora_despegue=$_REQUEST["hora_despegue"];
-      $hora_cierra_despegue=$_REQUEST["hora_cierra_despegue"];
-      $hora_llegada_destino=$_REQUEST["hora_llegada_destino"];
-      $matricula_avion=$_REQUEST["matricula_avion"];
-      try {
-        $result = $etd->insertarCabecera($fecha_vuelo,$nro_vuelo,$origen,$hora_despegue,$hora_cierra_despegue,$hora_llegada_destino,$matricula_avion);			
-        if (!$result) {
-          new Exception("Ha ocurrido un error al insertar los registros");
-        }
-      } catch (Exception $e) {
-        echo json_encode(array("result"=>"Error","mensaje"=>$e,"icon"=>"error"));
-      }
-      echo json_encode(array("result"=>"Completado","mensaje"=>"Ha terminado el proceso con éxito","icon"=>"success"));
+      $this->CrearManifiesto();
     }
     if($flag=="ImportarPax")
     {
@@ -156,27 +236,81 @@ class tuua_application extends App{
       echo json_encode(array("result"=>"Completado","mensaje"=>"El manifiesto ha sido eliminado.","icon"=>"success"));
     }
     if($flag=="ActualizarManifiesto"){
-      
-      $etd=new EnviarTuaDAO();	
-      $idFileTuua=$_REQUEST["idFileTuua"];
-      $hora_despegue=$_REQUEST["hora_despegue"];
-      $hora_cierra_despegue=$_REQUEST["hora_cierra_despegue"];
-      $hora_llegada_destino=$_REQUEST["hora_llegada_destino"];
-      $matricula_avion=$_REQUEST["matricula_avion"];
-      $params = array("hora_despegue"=>$hora_despegue,"hora_cierra_despegue"=>$hora_cierra_despegue,"hora_llegada_destino"=>$hora_llegada_destino,"matricula_avion"=>$matricula_avion);
-      try {
-        $result = $etd->ActualizarManifiesto($idFileTuua,$params);
-        if (!$result) {
-          new Exception("Ha ocurrido un error al actualizar el manifiesto, intentelo más tarde.");
-        }
-      } catch (Exception $e) {
-        echo json_encode(array("result"=>"Error","mensaje"=>$e,"icon"=>"error"));
-      }
-      echo json_encode(array("result"=>"Completado","mensaje"=>"Ha terminado el proceso con éxito","icon"=>"success"));
+      $this->Actualizar();
     }
 
     //require_once("clases/EnviarTuaDAO.php");
     //require_once("clases/EnviarTuaCORPAC.php");
     //require_once("clases/EnviarTuaAAP.php");
   }
+  public function ModificarPasajero(){
+    $etd=new modeloTuua_application();
+  
+    $idItensPax=$_REQUEST["idItensPax"];
+    $apellidoPax=$_REQUEST["apellidoPax"];
+    $nombrePax=$_REQUEST["nombrePax"];
+    $tipoPax=$_REQUEST["tipoPax"];
+    $foidPax=$_REQUEST["foidPax"];
+    $nrofrecPax=$_REQUEST["nrofrecPax"];
+    $destinoPax=$_REQUEST["destinoPax"];
+    $clasePax=$_REQUEST["clasePax"];
+    $nroTicketPax=$_REQUEST["nroTicketPax"];
+    $nroCuponPax=$_REQUEST["nroCuponPax"];
+    $nroReferencia=$_REQUEST["nroReferencia"];
+    $nroAsientoPax=$_REQUEST["nroAsientoPax"];
+    $nroDoc=$_REQUEST["nroDoc"];
+    $nacPax=$_REQUEST["nacPax"];
+    $params = array("apellidoPax"=>$apellidoPax,"nombrePax"=>$nombrePax,"tipoPax"=>$tipoPax,"foidPax"=>$foidPax,"nrofrecPax"=>$nrofrecPax,"destinoPax"=>$destinoPax,"clasePax"=>$clasePax,"nroTicketPax"=>$nroTicketPax,"nroCuponPax"=>$nroCuponPax,"nroReferencia"=>$nroReferencia,"nroAsientoPax"=>$nroAsientoPax,"nroDoc"=>$nroDoc,"nacPax"=>$nacPax);
+    try {
+      $result = $etd->UpdatePasajero($idItensPax,$params);
+      if (!$result) {
+        new Exception("Ha ocurrido un error al actualizar el pasajero, intentelo más tarde.");
+      }
+    } catch (Exception $e) {
+      echo json_encode(array("result"=>"Error","mensaje"=>$e,"icon"=>"error"));
+    }
+    echo json_encode(array("result"=>"Completado","mensaje"=>"Ha terminado el proceso con éxito","icon"=>"success"));
+  }
+  public function EliminarPasajero(){
+    $etd=new modeloTuua_application();
+    $idItensPax=$_REQUEST["idItensPax"];
+    try {
+      $result = $etd->EliminarPasajero($idItensPax);
+      if (!$result) {
+        new Exception("El pasajero no ha podido ser eliminado");
+      }
+    } catch (Exception $th) {
+      echo json_encode(array("result"=>"Error","mensaje"=>$e,"icon"=>"error"));
+    }
+    echo json_encode(array("result"=>"Completado","mensaje"=>"El pasajero ha sido eliminado.","icon"=>"success"));
+  }
+  public function CrearPasajero(){
+    $etd=new modeloTuua_application();
+  
+    $apellidoPax=$_REQUEST["apellidoPax"];
+    $nombrePax=$_REQUEST["nombrePax"];
+    $tipoPax=$_REQUEST["tipoPax"];
+    $foidPax=$_REQUEST["foidPax"];
+    $nrofrecPax=$_REQUEST["nrofrecPax"];
+    $destinoPax=$_REQUEST["destinoPax"];
+    $clasePax=$_REQUEST["clasePax"];
+    $nroTicketPax=$_REQUEST["nroTicketPax"];
+    $nroCuponPax=$_REQUEST["nroCuponPax"];
+    $nroReferencia=$_REQUEST["nroReferencia"];
+    $nroAsientoPax=$_REQUEST["nroAsientoPax"];
+    $nroDoc=$_REQUEST["nroDoc"];
+    $nacPax=$_REQUEST["nacPax"];
+    $idFileTuua=$_REQUEST["idFileTuua"];
+    $params = array("apellidoPax"=>$apellidoPax,"nombrePax"=>$nombrePax,"tipoPax"=>$tipoPax,"foidPax"=>$foidPax,"nrofrecPax"=>$nrofrecPax,"destinoPax"=>$destinoPax,"clasePax"=>$clasePax,"nroTicketPax"=>$nroTicketPax,"nroCuponPax"=>$nroCuponPax,"nroReferencia"=>$nroReferencia,"nroAsientoPax"=>$nroAsientoPax,"nroDoc"=>$nroDoc,"nacPax"=>$nacPax,"idFileTuua"=>$idFileTuua);
+    try {
+      $result = $etd->CrearPasajero($params);
+      if (!$result) {
+        new Exception("Ha ocurrido un error al crear el pasajero, intentelo más tarde.");
+      }
+    } catch (Exception $e) {
+      echo json_encode(array("result"=>"Error","mensaje"=>$e,"icon"=>"error"));
+    }
+    echo json_encode(array("result"=>"Completado","mensaje"=>"Ha terminado el proceso con éxito","icon"=>"success"));
+  }
+
 }

@@ -41,6 +41,12 @@ define('HOST_BASE_DATOS', '172.16.1.162');
 define('NOMBRE_BASE_DATOS', 'db_admin');
 define('USUARIO_BASE_DATOS', 'userweb');
 define('CLAVE_BASE_DATOS', '#Peru*31x');
+
+define('HOST_BASE_DATOS_PASARELA', '198.72.112.144');
+define('NOMBRE_BASE_DATOS_PASARELA', 'db_pasarela');
+define('USUARIO_BASE_DATOS_PASARELA', 'userweb');
+define('CLAVE_BASE_DATOS_PASARELA', '#Peru*31x');
+
 define ('NUM_PERPAGE',10);
 
 //RUTA POR DEFECTO

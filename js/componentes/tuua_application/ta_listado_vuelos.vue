@@ -1,6 +1,6 @@
 <template id="ta_listado_vuelos">
     <div class="">
-          <modalComponent :titulo_modal="'Crear Manifiesto'">
+          <modalComponent :idmodal="'modalCrearEditarManifiesto'" :titulo_modal="'Crear Manifiesto'">
             <template v-slot:bodyModal>
               <input id="flag" value="" type="hidden">
               <div id="reprocesar"></div>

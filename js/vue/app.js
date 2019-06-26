@@ -1,6 +1,5 @@
 Vue.use(VueRouter);
 import router from './routes.js';
-
   var appVue = new Vue({
   el:'#vue_app',
   router,
@@ -23,7 +22,7 @@ import router from './routes.js';
   watch:{
    
   },
-  methods: {
+  methods: { 
     cerrar(){
       window.location.assign('/MNF/acceso/cerrar');
     },
@@ -62,5 +61,4 @@ import router from './routes.js';
         //document.querySelector('.comprobantesestado').style.display= (val!="portadaindex"?'none':'');
     },
   }
-});
-  
+}); 

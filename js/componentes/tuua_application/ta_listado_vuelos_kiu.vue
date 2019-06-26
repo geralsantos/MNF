@@ -36,10 +36,10 @@
                                     </button>
                                     <div class="dropdown-menu">
                                         <button type="button" class="dropdown-item " @click="ImportarPax(row.idFileTuua,row.nroVuelo,row.Fecha,row.aeroEmbarque)">ImportarPax</button>
-                                      <button type="button" class="dropdown-item " :href="'/intranet/app/tuua/index/'+row.idFileTuua">Ver Detalle de Pax</button>
+                                        <button type="button" class="dropdown-item " @click="IrDetallePax(row.idFileTuua)">Ver Detalle de Pax</button>
                                         <button type="button" class="dropdown-item " @click="Reprocesar(row.idFileTuua,row.aeroEmbarque)">Reprocesar</button>
                                         <button type="button" class="dropdown-item " @click="EditarItem(row)">Modificar</button>
-                                      <div class="dropdown-divider"></div>
+                                        <div class="dropdown-divider"></div>
                                         <button type="button" class="dropdown-item text-danger" @click="Eliminar(row.idFileTuua)">Eliminar</button>
                                     </div>
                                   </div>
@@ -54,8 +54,10 @@
     </div>
 </template>
 <script>
+import variable_entorno from '../../variable_entorno.js';
 import tableComponent from '../tableComponent.vue';
-  import Swal from 'sweetalert2'
+import Swal from 'sweetalert2'
+import appVue from '../app.vue';
 
 export default {
     name: 'ta_listado_vuelos_kiu',
@@ -91,32 +93,7 @@ export default {
                     console.log(data)
                     self.cabeceraFile = data;
                     setTimeout(() => {
-                     $('#myTable').DataTable({
-                        "language":{
-                           "sProcessing":     "Procesando...",
-                            "sLengthMenu":     "Mostrar _MENU_ registros",
-                            "sZeroRecords":    "No se encontraron resultados",
-                            "sEmptyTable":     "Ningún dato disponible en esta tabla",
-                            "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                            "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
-                            "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-                            "sInfoPostFix":    "",
-                            "sSearch":         "Buscar:",
-                            "sUrl":            "",
-                            "sInfoThousands":  ",",
-                            "sLoadingRecords": "Cargando...",
-                            "oPaginate": {
-                                "sFirst":    "Primero",
-                                "sLast":     "Último",
-                                "sNext":     "Siguiente",
-                                "sPrevious": "Anterior"
-                            },
-                            "oAria": {
-                                "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-                                "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                            }
-                        }
-                        });
+                      variable_entorno.INIT_TABLE();
                       self.tablereadyshow=true;
                     }, 150);
             })
@@ -125,8 +102,37 @@ export default {
         ImportarPax(){
 
         },
-        Reprocesar(){
-
+        IrDetallePax(idFileTuua){
+          window.open('ta_listado_pax?q='+idFileTuua,'_blank');
+          //location.href='ta_listado_pax?q='+idFileTuua;
+        },
+        Reprocesar(idFileTuua,embarque){
+          var self = this;
+          Swal.fire({
+            title: 'Esta seguro que desea reprocesar el manifiesto: '+idFileTuua+' ?',
+            text: "",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si'
+          }).then((result) => {
+            if (result.value) {
+              axios({
+                  method: 'POST',
+                  url: 'AdpController?view',
+                  params: {flag:'Reprocesar',id_file:idFileTuua,embarque:embarque}
+              }).then((response) => {
+                  let data = response.data;
+                  Swal.fire(data["result"],data["mensaje"],data["icon"]);
+                  self.buscarVuelos();
+              })
+              .catch((error) => {
+                console.log(error);
+                Swal.fire("error",error,"error");
+              });
+            }
+          })
         },
         Eliminar(idFileTuua){
           var self = this;

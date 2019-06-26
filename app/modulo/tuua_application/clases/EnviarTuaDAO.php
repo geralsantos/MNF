@@ -10,7 +10,7 @@ class EnviarTuaDAO extends modeloTuua_application{
     function EliminarManifiesto($idTuuaFile){
         $da = new modeloTuua_application();
         //$sql = "UPDATE tuuaCabeceraFile set Estado = 3 WHERE idFileTuua ='".$idTuuaFile."'";
-        $sql = $da->updateData("tuuaCabeceraFile", array("Estado"=>3), array("idFileTuua"=>$idTuuaFile));
+        $sql = $this->updateData("tuuaCabeceraFile", array("Estado"=>3), array("idFileTuua"=>$idTuuaFile));
         if (!$sql) {
             return false;
         }
@@ -19,15 +19,15 @@ class EnviarTuaDAO extends modeloTuua_application{
     function ActualizarManifiesto($idTuuaFile,$params=array()){
         $da = new modeloTuua_application();
         //$sql = "UPDATE tuuaCabeceraFile set horaCierrePuerta='".$params["hora_despegue"]."',horaCierreDespegue='".$params["hora_cierra_despegue"]."',horaLlegadaDestino='".$params["hora_llegada_destino"]."',matriculaAvion='".$params["matricula_avion"]."' WHERE idFileTuua=:idFileTuua";
-        $values = array('horaCierrePuerta'=>$params["hora_despegue"],'horaCierreDespegue'=>$params["hora_cierra_despegue"],'horaLlegadaDestino'=>$params["hora_llegada_destino"],'matriculaAvion'=>$params["matricula_avion"],);
+        $values = array('horaCierrePuerta'=>$params["hora_despegue"],'horaCierreDespegue'=>$params["hora_cierra_despegue"],'horaLlegadaDestino'=>$params["hora_llegada_destino"],'matriculaAvion'=>$params["matricula_avion"]);
         $where = array('idFileTuua'=>$idTuuaFile);
-        $sql = $da->updateData("tuuaCabeceraFile", $values, $where);
+        $sql = $this->updateData("tuuaCabeceraFile", $values, $where);
         if (!$sql) {
             return false;
         }
         return true;
     }
-    function ConsultarManifiesto($idTuuaFile){
+    /*function ConsultarManifiesto($idTuuaFile){
         $da = new Datos();
         $sql = "SELECT nroVuelo,fecVueloTip,aeroEmbarque,horaCierrePuerta,horaCierreDespegue,horaLlegadaDestino,matriculaAvion FROM tuuaCabeceraFile WHERE idFileTuua ='".$idTuuaFile."'";
         if (!$sql = $da->EjecutarDatosNuevo($sql)) {
@@ -48,25 +48,32 @@ class EnviarTuaDAO extends modeloTuua_application{
         }
         $response = array("data"=>$arr);
         return json_encode($response);
-    }
+    }*/
     function Reprocesar($idTuuaFile) {
 
-        $da = new Datos();
+        $da = new modeloTuua_application();
 
         //La primera consulta me halla la cantidad de pasajeros ejm: '00051'
-        $sqlcant = "SELECT LPAD(COUNT(*),5,'0') AS cantLineasDetalle FROM tuuaPasajerosFile WHERE estado = 1 AND idFileTuua = " . $idTuuaFile;
-        $listacant = $da -> ListarDatos2($sqlcant);
-        //inserto la cantidad de pasajeros al campo cantLineasDetalle
-        $sqlcant_mod = "UPDATE tuuaCabeceraFile SET cantLineasDetalle = '" . $listacant[0]['cantLineasDetalle'] . "' WHERE idFileTuua = " . $idTuuaFile;
-        $da -> EjecutarDatos($sqlcant_mod);
+        $sqlcant = "SELECT LPAD(COUNT(*),5,'0') AS cantLineasDetalle FROM tuuaPasajerosFile WHERE estado = :estado AND idFileTuua = :idFileTuua";
+        //$listacant = $da -> ListarDatos2($sqlcant);
+        $listacant = $this->executeQuery( $sqlcant,array("estado"=>1,"idFileTuua"=>$idTuuaFile) );
 
-        $sql = "SELECT * FROM tuuaCabeceraFile WHERE idFileTuua=" . $idTuuaFile;
-        $rsXML = $da -> ListarDatos2($sql);
+        //inserto la cantidad de pasajeros al campo cantLineasDetalle
+        //$sqlcant_mod = "UPDATE tuuaCabeceraFile SET cantLineasDetalle = '" . $listacant[0]['cantLineasDetalle'] . "' WHERE idFileTuua = " . $idTuuaFile;
+        //$da -> EjecutarDatos($sqlcant_mod);
+
+        $values = array('cantLineasDetalle'=>$listacant[0]['cantLineasDetalle']);
+        $where = array('idFileTuua'=>$idTuuaFile);
+        $sql = $this->updateData("tuuaCabeceraFile", $values, $where);
+
+        $sql = "SELECT * FROM tuuaCabeceraFile WHERE idFileTuua=:idFileTuua ";
+        $rsXML = $this->executeQuery( $sql,array("idFileTuua"=>$idTuuaFile) );
+        //$rsXML = $da -> ListarDatos2($sql);
+        
         if (count($rsXML) > 0) {
 
             //$sql="UPDATE tuuaCabeceraFile SET Estado=10 WHERE idFileTuua=" . $rsXML[0]["idFileTuua"] ; // estado trancitorio del archivo
             //$da->EjecutarDatos($sql);
-
             for ($i = 0; $i < count($rsXML); $i = $i + 1) {
                 $idFile = $rsXML[$i]["idFileTuua"];
 
@@ -80,8 +87,9 @@ class EnviarTuaDAO extends modeloTuua_application{
                 $horaCierreDespegue = $rsXML[$i]["horaCierreDespegue"];
                 $idXMLFile = $rsXML[$i]["IdManifiesto"];
 
-                $sql = "select * from tuuaPasajerosFile where idFileTuua=" . $idFile . " and estado=1";
-                $rsPasajero = $da -> ListarDatos2($sql);
+                $sql = "select * from tuuaPasajerosFile where idFileTuua=:idFileTuua and estado=:estado";
+                $rsPasajero = $this->executeQuery( $sql,array("idFileTuua"=>$idFile,"estado"=>1) );
+                //$rsPasajero = $da -> ListarDatos2($sql);
                 $countPasajeros = count($rsPasajero);
 
                 $xmlCuerpo = "";
@@ -163,6 +171,7 @@ class EnviarTuaDAO extends modeloTuua_application{
                 if ($_SERVER['REMOTE_ADDR'] == "172.16.1.45" || $_SERVER['REMOTE_ADDR'] == "172.16.1.43" || $_SERVER['REMOTE_ADDR'] == "172.16.1.53") {
                     echo $xmlFile;
                 }
+
                 $this -> enviaXMLADP($xmlFile, $idFile, $vueloOrigen);
                 return;
 
@@ -310,7 +319,7 @@ class EnviarTuaDAO extends modeloTuua_application{
 
             }
             //$sql = "INSERT INTO tuuaCabeceraFile (nombreArchivo,nroVuelo,fecVueloTip,fechaVuelo,aeroEmbarque,horaCierrePuerta,horaCierreDespegue,horaLlegadaDestino,matriculaAvion,Estado,IdManifiesto) VALUES ".implode(",",$valoresInsert);
-            $sql = $da->insertDataMasivo('tuuaCabeceraFile',array('nombreArchivo','nroVuelo','fecVueloTip','fechaVuelo','aeroEmbarque','horaCierrePuerta','horaCierreDespegue','horaLlegadaDestino','matriculaAvion','Estado','IdManifiesto'), $valoresInsert);
+            $sql = $this->insertDataMasivo('tuuaCabeceraFile',array('nombreArchivo','nroVuelo','fecVueloTip','fechaVuelo','aeroEmbarque','horaCierrePuerta','horaCierreDespegue','horaLlegadaDestino','matriculaAvion','Estado','IdManifiesto'), $valoresInsert);
             if (!$da) {
                 return false;
             }
@@ -502,10 +511,12 @@ class EnviarTuaDAO extends modeloTuua_application{
             // $refer2 = str_pad($y, 5, "0", STR_PAD_LEFT);
         // }
 
-        $sql3 = "UPDATE tuuaCabeceraFile
-			SET cantLineasDetalle = '" . $j . "' 
-			WHERE idFileTuua = '" . $idFileTuua . "';";
-        $da -> EjecutarDatos($sql3);
+       // $sql3 = "UPDATE tuuaCabeceraFile	SET cantLineasDetalle =:cantLineasDetalle	WHERE idFileTuua = :idFileTuua";
+        //$da -> EjecutarDatos($sql3);
+
+        $values = array('cantLineasDetalle'=>$j);
+        $where = array('idFileTuua'=>$idFileTuua);
+        $sql = $this->updateData("tuuaCabeceraFile", $values, $where);
 
         $msg = "El Sistema registro " . $j . " Pax";
         echo $msg;
@@ -524,7 +535,7 @@ class EnviarTuaDAO extends modeloTuua_application{
 
         $da = new modeloTuua_application();
         //$sql = "UPDATE  tuuaAutogen set valor=$id_manifiesto WHERE tabla=:tabla";
-        $da->updateData("tuuaAutogen", array("valor"=>$id_manifiesto), array("tabla"=>'ManiADP'));
+        $this->updateData("tuuaAutogen", array("valor"=>$id_manifiesto), array("tabla"=>'ManiADP'));
         //$da -> EjecutarDatos($sql);
         return;
 
@@ -582,9 +593,10 @@ class EnviarTuaDAO extends modeloTuua_application{
     }
 
     function func_destinosEmail() {
-        $da = new Datos();
-        $sql = "SELECT * FROM db_pasarela.parametro WHERE parametro='email_rep_ventas_pais'";
-        $rs = $da -> ListarDatos2($sql);
+        //$da = new Datos();
+        $sql = "SELECT * FROM db_pasarela.parametro WHERE parametro=:parametro";
+        $rs = $this->executeQuery( $sql,array("parametro"=>"email_rep_ventas_pais") );
+        //$rs = $da -> ListarDatos2($sql);
         $emailEnvio = $rs[0]["valor"];
         return $emailEnvio;
     }
@@ -607,31 +619,71 @@ class EnviarTuaDAO extends modeloTuua_application{
             default :
                 $emailEmbarque = "email_rep_ventas_pais";
         }
+        $dap = new MySQLPasarela();
 
-        $dap = new DatosPasarela();
-
-        $sql = "SELECT * FROM parametro WHERE parametro='" . $emailEmbarque . "'";
-
-        $rs = $dap -> ListarDatos2Pasarela($sql);
+        $sql = "SELECT * FROM parametro WHERE parametro=:parametro";
+        $rs = $dap->executeQuery( $sql,array("parametro"=>$emailEmbarque) );
+        //$rs = $dap -> ListarDatos2Pasarela($sql);
         //$rs=func_select($sql);
         $emailEnvio = $rs[0]["valor"];
+        //print_r($emailEnvio);
 
         return $emailEnvio;
     }
 
     function func_Graba_Log($nomArchivo, $estProceso, $vuelo, $fecha, $totalPax, $obs, $id_file) {// update insert delete
-        $da = new Datos();
+        $da = new modeloTuua_application();
         $obss = preg_replace('[\s+]', '', $obs);
-        $sql = "INSERT INTO tuuaLogFile (nombreArchivo,estadoProceso,nroVuelo,fechaVuelo,totalPax,obs,id_file) 
-		VALUES( '" . $nomArchivo . "','" . $estProceso . "','" . $vuelo . "','" . $fecha . "','" . $totalPax . "','" . $obss . "','" . $id_file . "')";
-
-        $da -> EjecutarDatos($sql);
+        /*$sql = "INSERT INTO tuuaLogFile (nombreArchivo,estadoProceso,nroVuelo,fechaVuelo,totalPax,obs,id_file) 
+        VALUES( '" . $nomArchivo . "','" . $estProceso . "','" . $vuelo . "','" . $fecha . "','" . $totalPax . "','" . $obss . "','" . $id_file . "')";*/
+         $values = array("nombreArchivo"=>$nomArchivo,"estadoProceso"=>$estProceso,"nroVuelo"=>$vuelo,"fechaVuelo"=>$fecha,"totalPax"=>$totalPax,"obs"=>$obss,"id_file"=>$id_file);
+         $sql = $this->insertData("tuuaLogFile",$values);
+        //$da -> EjecutarDatos($sql);
         return;
     }
 
     function func_ErrorEmailDetalle($nomArchivo, $estProceso, $vuelo, $fecha, $totalPax, $obs) {
+         //require(APP.DS.'libreria/mail/htmlMimeMail5.php');
+        require_once(APP . DS . 'libreria' . DS . 'class.phpmailer.php');
+        $ws_Aeropuerto = "ADP ";
+        if (strpos($nomArchivo, "CUZ") > 0)
+        $ws_Aeropuerto = "Corpac ";
 
-        require_once ('mail/htmlMimeMail5.php');
+         /* EMAIL SETTING */
+     $mail = new PHPMailer();
+     $mail->IsSMTP(); // send via SMTP
+     //$mail->SMTPDebug = 3; //se descomenta en caso quieren ver el mensaje detallado de phpmailer al enviar correo
+     $mail->Host = 'mail.peruvian.pe';
+     $mail->Port = 25;
+     $mail->SMTPSecure = 'tls';
+     $mail->SMTPAuth = true; // turn on SMTP authentication
+     $mail->Username = "ventasweb@peruvian.pe"; // SMTP username
+     $mail->Password = 'ven8065x';
+     $mail->IsHTML(true);
+     $de = "ventasweb@peruvian.pe";
+     $mail->From = $de;
+     $mail->FromName = "<tuua@peruvian.pe>";
+     $mail->Subject = ($ws_Aeropuerto . 'ERROR - EXTRACCION DE PASAJEROS');
+     $body = file_get_contents(APP.DS.'modulo/tuua_application/clases/msn_error_file.html');
+
+     $body = str_replace('--Titulo--', "Error Procesando Archivo", $body);
+    $body = str_replace('--Mensaje--', "Archivo :" . $nomArchivo . "<br>Estado :" . $estProceso . "<br>Vuelo" . $vuelo . "<br>Fecha :" . $fecha . "<br>Total :" . $totalPax . "<br><b><font color='#0000CC'> Observacion :" . $obs . "</font></b>", $body);
+
+     $mail->Body = $body;
+     $mail->addEmbeddedImage(APP.DS.'modulo/tuua_application/clases/fondo_web.jpg',"fondo_web.jpg");
+     $embarque = substr($nomArchivo, -3);
+ 
+     $email_destinos = explode(",", $this -> func_destinosEmail_Embarque($embarque)); 
+     //print_r($email_destinos);
+     foreach ($email_destinos as $key => $to) {
+         $mail->addAddress($to);
+     }
+     if(!$mail->send()) 
+     {
+     echo "Mailer Error: " . $mail->ErrorInfo;
+     }
+
+       /* require_once ('mail/htmlMimeMail5.php');
         $mail = new htmlMimeMail5();
 
         $ws_Aeropuerto = "ADP ";
@@ -652,20 +704,60 @@ class EnviarTuaDAO extends modeloTuua_application{
         $mail -> setReceipt('ventasweb@peruvian.pe');
         $mail -> addEmbeddedImage(new fileEmbeddedImage('../clases/fondo_web.jpg'));
         $embarque = substr($nomArchivo, -3);
-        $email_destinos = split(",", $this -> func_destinosEmail_Embarque($embarque));
+        $email_destinos = explode(",", $this -> func_destinosEmail_Embarque($embarque));
 
         $result = $mail -> send($email_destinos, 'smtp');
 
         if ($result) {
             //guarda BD
-        }
+        }*/
     }
 
     function func_EmailXMLCOMPLETC($nomArchivo, $vuelo, $fecha, $rptWS, $horacierrepuerta, $horaCierreDespegue) {
+        //require(APP.DS.'libreria/mail/htmlMimeMail5.php');
+        require_once(APP . DS . 'libreria' . DS . 'class.phpmailer.php');
+        /* EMAIL SETTING */
+    $mail = new PHPMailer();
+    $mail->IsSMTP(); // send via SMTP
+    //$mail->SMTPDebug = 3; //se descomenta en caso quieren ver el mensaje detallado de phpmailer al enviar correo
+    $mail->Host = 'mail.peruvian.pe';
+    $mail->Port = 25;
+    $mail->SMTPSecure = 'tls';
+    $mail->SMTPAuth = true; // turn on SMTP authentication
+    $mail->Username = "ventasweb@peruvian.pe"; // SMTP username
+    $mail->Password = 'ven8065x';
+    $mail->IsHTML(true);
+    $de = "ventasweb@peruvian.pe";
+    $mail->From = $de;
+    $mail->FromName = "<tuua@peruvian.pe>";
 
-        require_once ('mail/htmlMimeMail5.php');
-        $mail = new htmlMimeMail5();
+    $ws_Aeropuerto = "ADP ";
+    if (strpos($nomArchivo, "CUZ") > 0)
+        $ws_Aeropuerto = "Corpac ";
+    if (strpos($nomArchivo, "AQP") > 0 || strpos($nomArchivo, "TCQ") > 0)
+        $ws_Aeropuerto = "AAP ";
 
+    $mail->Subject = ($ws_Aeropuerto . 'Envio XML Completado Vuelo: ' . $vuelo . ' .:::. ' . $fecha);
+    $body = file_get_contents(APP.DS.'modulo/tuua_application/clases/msn_error_file.html');
+    $body = str_replace('--Titulo--', 'Envio XML Completado Vuelo : ' . $vuelo . ' .:::. ' . $fecha, $body);
+
+    $msgHtml = "<table width=450 border=0 cellspacing=0 cellpadding=0><tr><td width=160>Nombre Archivo</td><td width=10>:</td><td width=286>" . $nomArchivo . "</td></tr><tr><td>Nro Vuelo</td><td>:</td><td>" . $vuelo . "</td></tr><tr><td>Fecha Vuelo</td><td>:</td><td>" . $fecha . "</td></tr><tr><td>Hora Cierre Puerta</td><td>&nbsp;</td><td>" . $horacierrepuerta . "</td></tr><tr><td>Hora Cierre Despegue</td><td>&nbsp;</td><td>" . $horaCierreDespegue . "</td></tr><tr><td>Respuesta WS</td><td>:</td><td>" . $rptWS . "</td></tr></table>";
+    $body = str_replace('--Mensaje--', $msgHtml, $body);
+    $mail->Body = $body;
+    $mail->addEmbeddedImage(APP.DS.'modulo/tuua_application/clases/fondo_web.jpg',"fondo_web.jpg");
+    $embarque = substr($nomArchivo, -3);
+
+    $email_destinos = explode(",", $this -> func_destinosEmail_Embarque($embarque)); 
+    //print_r($email_destinos);
+    foreach ($email_destinos as $key => $to) {
+        $mail->addAddress($to);
+    }
+    if(!$mail->send()) 
+    {
+    echo "Mailer Error: " . $mail->ErrorInfo;
+    }
+    //return $mail->Send();
+        /*$mail = new htmlMimeMail5();
         $mail -> setFrom('<tuua@peruvian.pe>');
         $mail -> setSMTPParams('mail.peruvian.pe', 25, 'mail.peruvian.pe', false, 'ventasweb@peruvian.pe', 'ven8065x');
 
@@ -678,7 +770,7 @@ class EnviarTuaDAO extends modeloTuua_application{
         $mail -> setSubject($ws_Aeropuerto . 'Envio XML Completado Vuelo: ' . $vuelo . ' .:::. ' . $fecha);
         $mail -> setPriority('high');
         //$mail->setText('Sample text');
-        $body = file_get_contents('../clases/msn_error_file.html');
+        $body = file_get_contents(APP.DS.'modulo/tuua_application/clases/msn_error_file.html');
         $body = str_replace('--Titulo--', 'Envio XML Completado Vuelo : ' . $vuelo . ' .:::. ' . $fecha, $body);
 
         $msgHtml = "<table width=450 border=0 cellspacing=0 cellpadding=0><tr><td width=160>Nombre Archivo</td><td width=10>:</td><td width=286>" . $nomArchivo . "</td></tr><tr><td>Nro Vuelo</td><td>:</td><td>" . $vuelo . "</td></tr><tr><td>Fecha Vuelo</td><td>:</td><td>" . $fecha . "</td></tr><tr><td>Hora Cierre Puerta</td><td>&nbsp;</td><td>" . $horacierrepuerta . "</td></tr><tr><td>Hora Cierre Despegue</td><td>&nbsp;</td><td>" . $horaCierreDespegue . "</td></tr><tr><td>Respuesta WS</td><td>:</td><td>" . $rptWS . "</td></tr></table>";
@@ -687,17 +779,18 @@ class EnviarTuaDAO extends modeloTuua_application{
         $mail -> setHTML($body);
 
         $mail -> setReceipt('ventasweb@peruvian.pe');
-        $mail -> addEmbeddedImage(new fileEmbeddedImage('../clases/fondo_web.jpg'));
+        $mail -> addEmbeddedImage(new fileEmbeddedImage(APP.DS.'modulo/tuua_application/clases/fondo_web.jpg'));
+        echo "f4";
 
         $embarque = substr($nomArchivo, -3);
 
-        $email_destinos = split(",", $this -> func_destinosEmail_Embarque($embarque));
-
+        $email_destinos = explode(",", $this -> func_destinosEmail_Embarque($embarque)); 
+        print_r($email_destinos);
         $result = $mail -> send($email_destinos, 'smtp');
-
+        print_r("final");
         if ($result) {
             //guarda BD
-        }
+        }*/
     }
 
     function enviaXMLADP($xml, $idFileTuuacabecera, $origen) {
@@ -707,12 +800,13 @@ class EnviarTuaDAO extends modeloTuua_application{
             //echo "<br><h1>================= SEPARADOR ============</h1>";
             //die("Fin");
             set_time_limit(60);
-            require_once ('lib/nusoap.php');
-            $da = new Datos();
+            require_once (APP.DS.'libreria/lib/nusoap.php');
+            //$da = new Datos();
 
-            $sql = "select * from tuuaCabeceraFile where idFileTuua=$idFileTuuacabecera";
+            $sql = "select * from tuuaCabeceraFile where idFileTuua=:idFileTuua";
             //echo $sql . "<br>";
-            $rsError = $da -> ListarDatos2($sql);
+            $rsError = $this->executeQuery( $sql,array("idFileTuua"=>$idFileTuuacabecera) );
+            //$rsError = $da -> ListarDatos2($sql);
 
             $nombreArchivo = $rsError[0]["nombreArchivo"] . $rsError[0]["aeroEmbarque"];
             $nroVuelo = $rsError[0]["nroVuelo"];
@@ -742,8 +836,13 @@ class EnviarTuaDAO extends modeloTuua_application{
 
             if ($sError = $oSoapClient -> getError()) {
                 echo "No se pudo realizar la operaciÃ³n [" . $sError . "]";
-                $sql = "UPDATE tuuaCabeceraFile SET Estado=6 WHERE idFileTuua=$idFileTuuacabecera";
-                $da -> EjecutarDatos($sql);
+                //$sql = "UPDATE tuuaCabeceraFile SET Estado=:Estado WHERE idFileTuua=:idFileTuua";
+
+                $values = array('Estado'=>6);
+                $where = array('idFileTuua'=>$idFileTuuacabecera);
+                $sql = $this->updateData("tuuaCabeceraFile", $values, $where);
+
+//                $da -> EjecutarDatos($sql);
 
                 $this -> func_Graba_Log($nombreArchivo, "5", $nroVuelo, $fechavuelo, $cantidadLineasDetallan, $valorEnvioTestProd . "<br>" . $sError, $idFileTuuacabecera);
                 $this -> func_ErrorEmailDetalle($nombreArchivo, "5", $nroVuelo, $fechavuelo, $cantidadLineasDetallan, $valorEnvioTestProd . "<br>" . $sError);
@@ -756,15 +855,18 @@ class EnviarTuaDAO extends modeloTuua_application{
             $respuesta = $oSoapClient -> call("EnvioManifiesto", array("binXML" => base64_encode($xml)));
             $this -> func_Graba_Log($nombreArchivo, "3", $nroVuelo, $fechavuelo, $cantidadLineasDetallan, "Enviando a webservices<br>" . $valorEnvioTestProd, $idFileTuuacabecera);
 
-            if ($_SERVER['REMOTE_ADDR'] == "172.16.1.43" || $_SERVER['REMOTE_ADDR'] == "172.16.1.53") {
+            if ($_SERVER['REMOTE_ADDR'] == "172.16.1.43" || $_SERVER['REMOTE_ADDR'] == "172.16.1.45" || $_SERVER['REMOTE_ADDR'] == "172.16.1.53") {
                 echo("<pre>" . print_r(htmlspecialchars($oSoapClient, ENT_QUOTES), true) . "</pre>");
             }
 
             if ($oSoapClient -> fault) {// Si
                 echo "Error fault : " . $oSoapClient -> fault;
-                $sql = "UPDATE tuuaCabeceraFile SET Estado=6 WHERE idFileTuua=$idFileTuuacabecera";
+                //$sql = "UPDATE tuuaCabeceraFile SET Estado=6 WHERE idFileTuua=$idFileTuuacabecera";
+                //$da -> EjecutarDatos($sql);
+                $values = array('Estado'=>6);
+                $where = array('idFileTuua'=>$idFileTuuacabecera);
+                $sql = $this->updateData("tuuaCabeceraFile", $values, $where);
 
-                $da -> EjecutarDatos($sql);
 
                 $this -> func_Graba_Log($nombreArchivo, "5", $nroVuelo, $fechavuelo, $cantidadLineasDetallan, $valorEnvioTestProd . "<br><br>" . $sError, $idFileTuuacabecera);
                 $this -> func_ErrorEmailDetalle($nombreArchivo, "5", $nroVuelo, $fechavuelo, $cantidadLineasDetallan, $valorEnvioTestProd . "<br><br>Error oSoapClient->fault" . $oSoapClient -> fault);
@@ -775,8 +877,11 @@ class EnviarTuaDAO extends modeloTuua_application{
                 // Hay algun error ?
                 if ($sError) {// Si
                     echo "Error  GetError :" . $oSoapClient -> getError() . "<BR>";
-                    $sql = "UPDATE tuuaCabeceraFile SET Estado=6 WHERE idFileTuua=$idFileTuuacabecera";
-                    $da -> EjecutarDatos($sql);
+                    //$sql = "UPDATE tuuaCabeceraFile SET Estado=6 WHERE idFileTuua=:idFileTuua";
+                    //$da -> EjecutarDatos($sql)
+                    $values = array('Estado'=>6);
+                    $where = array('idFileTuua'=>$idFileTuuacabecera);;
+                    $sql = $this->updateData("tuuaCabeceraFile", $values, $where);
                     $this -> func_Graba_Log($nombreArchivo, "5", $nroVuelo, $fechavuelo, $cantidadLineasDetallan, $valorEnvioTestProd . "<br><br>" . $sError, $idFileTuuacabecera);
                     $this -> func_ErrorEmailDetalle($nombreArchivo, "5", $nroVuelo, $fechavuelo, $cantidadLineasDetallan, $valorEnvioTestProd . "<br><br>" . $sError);
 
@@ -785,17 +890,22 @@ class EnviarTuaDAO extends modeloTuua_application{
             }
 
             if (isset($respuesta["EnvioManifiestoResult"])) {
-                print_r($respuesta["EnvioManifiestoResult"]);
+                /*print_r($respuesta["EnvioManifiestoResult"]);
                 echo "<br><br>";
-                 echo $nroVuelo . " - " . $fechavuelo;
-                 echo "<br><br>";
+                echo $nroVuelo . " - " . $fechavuelo;
+                echo "<br><br>";*/
 
                 $valor_rpta = print_r($respuesta, true);
 
-                $sql = "UPDATE tuuaCabeceraFile SET Estado=2 WHERE idFileTuua=$idFileTuuacabecera";
-                $da -> ListarDatos2($sql);
+                //$sql = "UPDATE tuuaCabeceraFile SET Estado=2 WHERE idFileTuua=$idFileTuuacabecera";
+                $values = array('Estado'=>2);
+                $where = array('idFileTuua'=>$idFileTuuacabecera);;
+                $sql = $this->updateData("tuuaCabeceraFile", $values, $where);
+                //$da -> ListarDatos2($sql);
                 $this -> func_Graba_Log($nombreArchivo, "4", $nroVuelo, $fechavuelo, $cantidadLineasDetallan, $valorEnvioTestProd . "<br>" . $valor_rpta, $idFileTuuacabecera);
+
                 $this -> func_EmailXMLCOMPLETC($nombreArchivo, $nroVuelo, $fechavuelo, $valorEnvioTestProd . "<br>" . $valor_rpta, $horacierrepuerta, $horaCierreDespegue);
+
 
             } else {
                 $valor_rpta = print_r($respuesta, true);
@@ -805,8 +915,13 @@ class EnviarTuaDAO extends modeloTuua_application{
                  print_r($respuesta);
                  echo  '</pre>';*/
 
-                $sql = "UPDATE tuuaCabeceraFile SET Estado=6 WHERE idFileTuua=$idFileTuuacabecera";
-                $da -> EjecutarDatos($sql);
+               // $sql = "UPDATE tuuaCabeceraFile SET Estado=6 WHERE idFileTuua=$idFileTuuacabecera";
+                //$da -> EjecutarDatos($sql);
+
+                $values = array('Estado'=>6);
+                $where = array('idFileTuua'=>$idFileTuuacabecera);;
+                $sql = $this->updateData("tuuaCabeceraFile", $values, $where);
+
                 $this -> func_Graba_Log($nombreArchivo, "5", $nroVuelo, $fechavuelo, $cantidadLineasDetallan, $valorEnvioTestProd . "<br><br>" . $valor_rpta, $idFileTuuacabecera);
                 $this -> func_ErrorEmailDetalle($nombreArchivo, "5", $nroVuelo, $fechavuelo, $cantidadLineasDetallan, $valorEnvioTestProd . "<br><br>" . $valor_rpta);
 
