@@ -35,7 +35,7 @@
                                       Opciones
                                     </button>
                                     <div class="dropdown-menu">
-                                        <button type="button" class="dropdown-item " @click="ImportarPax(row.idFileTuua,row.nroVuelo,row.Fecha,row.aeroEmbarque)">ImportarPax</button>
+                                        <button type="button" class="dropdown-item " @click="ImportarPax(row)">ImportarPax</button>
                                         <button type="button" class="dropdown-item " @click="IrDetallePax(row.idFileTuua)">Ver Detalle de Pax</button>
                                         <button type="button" class="dropdown-item " @click="Reprocesar(row.idFileTuua,row.aeroEmbarque)">Reprocesar</button>
                                         <button type="button" class="dropdown-item " @click="EditarItem(row)">Modificar</button>
@@ -99,8 +99,34 @@ export default {
             })
             .catch((error) => error);
         },
-        ImportarPax(){
-
+        ImportarPax(row){
+          let idFileTuua=row.idFileTuua,nroVuelo=row.nroVuelo,Fecha=row.Fecha,aeroEmbarque=row.aeroEmbarque;
+          var self = this;
+          Swal.fire({
+            title: 'Esta seguro que desea importar los pasajeros del vuelo: '+idFileTuua+' ?',
+            text: "",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si'
+          }).then((result) => {
+            if (result.value) {
+              axios({
+                  method: 'POST',
+                  url: 'AdpController?view',
+                  params: {flag:'ImportarPax',nroVuelo:nroVuelo,Fecha:Fecha,aeroEmbarque:aeroEmbarque,idFileTuua:idFileTuua}
+              }).then((response) => {
+                  let data = response.data;
+                  Swal.fire(data["result"],data["mensaje"],data["icon"]);
+                  self.buscarVuelos();
+              })
+              .catch((error) => {
+                console.log(error);
+                Swal.fire("error",error,"error");
+              });
+            }
+          })
         },
         IrDetallePax(idFileTuua){
           window.open('ta_listado_pax?q='+idFileTuua,'_blank');
