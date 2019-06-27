@@ -213,13 +213,13 @@ class tuua_application extends App{
     }
     if($flag=="ImportarPax")
     {
-      $etd=new EnviarTuaDAO();	
+      $etd=new EnviarTuaDAO();
       $idFileTuua=$_REQUEST["idFileTuua"];
       $FechaUso=$_REQUEST["Fecha"];
       $LocOrigen=$_REQUEST["aeroEmbarque"];
-      $LocDestino=$_REQUEST["LocDestino"];
+      //$LocDestino=$_REQUEST["LocDestino"];
+      $LocDestino="";
       $NroVuelo=substr($_REQUEST["nroVuelo"], -4);
-
       $etd->importarPax($idFileTuua,$FechaUso,$LocOrigen,$LocDestino,(int)$NroVuelo);
    }
     if($flag=="EliminarManifiesto"){
@@ -238,10 +238,6 @@ class tuua_application extends App{
     if($flag=="ActualizarManifiesto"){
       $this->Actualizar();
     }
-
-    //require_once("clases/EnviarTuaDAO.php");
-    //require_once("clases/EnviarTuaCORPAC.php");
-    //require_once("clases/EnviarTuaAAP.php");
   }
   public function ModificarPasajero(){
     $etd=new modeloTuua_application();

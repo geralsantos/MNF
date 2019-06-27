@@ -331,10 +331,7 @@ class EnviarTuaDAO extends modeloTuua_application{
     }
 
     function importarPax($idFileTuua, $FechaUso, $LocOrigen, $LocDestino, $NroVuelo) {
-
-        require_once ("../lib/sql_clase.php");
-        $oMsSql = new clsDataSql();
-        $oMsSql -> conectar();
+        $oMsSql = new ConexionPrasysPeruvian();
 
         //if($_SERVER['REMOTE_ADDR']=="172.16.1.43" and $LocOrigen = 'PIU' ){
         //if($_SERVER['REMOTE_ADDR']=="172.16.1.43"){
@@ -359,43 +356,44 @@ class EnviarTuaDAO extends modeloTuua_application{
         //            left join VentasBoletos b on a.BoletoVta = b.Boleto
         //            where FechaUso = '".$FechaUso."' and LocOrigen='".$LocOrigen."'
         //            and NroVuelo = '".$NroVuelo."' and TipoUso = 'VO'";
-
         $sql = "select IdVuelo 
 				from Vuelos where 
-				FechaVuelo = '" . $FechaUso . "' and LocOrigen='" . $LocOrigen . "'  
-				and NroVuelo = '" . $NroVuelo . "' ";
+				FechaVuelo = :FechaVuelo and LocOrigen=:LocOrigen  
+				and NroVuelo =:NroVuelo ";
 
         error_log($sql);
 
-        $rp = $oMsSql -> execute($sql);
+        $rp = $oMsSql->executeQuery( $sql,array("FechaVuelo"=>$FechaVuelo,"LocOrigen"=>$LocOrigen,"NroVuelo"=>$NroVuelo));
         $IdVuelo = array();
         
-        while ($res = mssql_fetch_array($rp)) {
-            $IdVuelo[] = $res["IdVuelo"] ;
+        foreach ($rp as $key => $value) {
+            $IdVuelo[] = $value["IdVuelo"] ;
         }
-
         $sql = "select a.BoletoVta, A.Cupon, c.Clase, b.foid, a.NombrePax AS NombrePax, a.TipoPax, a.LocDestino
 				from Usos a
 				left join VentasBoletos b on a.BoletoVta = b.Boleto 
 				left join VentasSegmentos c on c.Boleto = a.BoletoVta and c.Cupon = a.Cupon
-				where IdVuelo in (" . implode(',',$IdVuelo) . ") and TipoUso = 'VO'
+				where IdVuelo in (:IdVuelo) and TipoUso = 'VO'
 				union all
 				select a.BoletoVta, A.Cupon, a.Clase, '' foid, a.NombrePax, a.TipoPax, a.LocDestino
 				from Interlineas a
-				where a.IdVuelo IN (" . implode(',',$IdVuelo) . ") and Source = '01'";
+				where a.IdVuelo IN (:IdVuelo2) and Source = '01'";
 
         error_log($sql);
         //}
 
-        $rp = $oMsSql -> execute($sql);
+        $rp = $oMsSql->executeQuery( $sql,array("IdVuelo"=>(implode(',',$IdVuelo)),"IdVuelo2"=>(implode(',',$IdVuelo)),"NroVuelo"=>$NroVuelo));
+        //$oMsSql -> execute($sql);
 
-        $da = new Datos();
+        //$da = new Datos();
         $j = 1;
 
-        $sql2 = "delete from tuuaPasajerosFile WHERE idFileTuua=" . $idFileTuua;
-        $da -> EjecutarDatos($sql2);
+        //$sql2 = "delete from tuuaPasajerosFile WHERE idFileTuua=:idFileTuua";
+        $where = array("idFileTuua"=>$idFileTuua);
+        $sql2 = $this->deleteData("tuuaPasajerosFile",$where);
+        //$da -> EjecutarDatos($sql2);
 
-        while ($res = mssql_fetch_array($rp)) {
+        foreach ($rp as $key => $res) {
 
             $refer = str_pad($j, 3, "0", STR_PAD_LEFT);
             $nombre = explode("/", $res["NombrePax"]);
@@ -412,7 +410,7 @@ class EnviarTuaDAO extends modeloTuua_application{
                     break;
             }
 
-            $sql2 = "INSERT INTO tuuaPasajerosFile
+            /*$sql2 = "INSERT INTO tuuaPasajerosFile
 		            (idFileTuua,
 		             apellidoPax,
 		             nombrePax,
@@ -438,8 +436,10 @@ class EnviarTuaDAO extends modeloTuua_application{
 			        '" . $res["Cupon"] . "',
 			        '" . $refer . "',
 			        '', 
-			        '1');";
-            $da -> EjecutarDatos($sql2);
+                    '1');";*/
+            /*$values = array("idFileTuua"=>$idFileTuua,"apellidoPax"=>$nombre[0],"nombrePax"=>$nombre[1],"tipoPax"=>$tipoPax,"foidPax"=>$res["foid"],"nroFrecPax"=>'',"destinoPax"=>$res["LocDestino"],"clasePax"=>$res["Clase"],"nroTicketPax"=>$res["BoletoVta"],"nroCuponPax"=>$res["Cupon"],"nroReferencia"=>$refer,"nroAsientoPax"=>'',"estado"=>'1');
+            $this->insertData("tuuaPasajerosFile",$values);*/
+            //$da -> EjecutarDatos($sql2);
             $j++;
 
         }
@@ -619,7 +619,7 @@ class EnviarTuaDAO extends modeloTuua_application{
             default :
                 $emailEmbarque = "email_rep_ventas_pais";
         }
-        $dap = new MySQLPasarela();
+        $dap = new ConexionPasarela();
 
         $sql = "SELECT * FROM parametro WHERE parametro=:parametro";
         $rs = $dap->executeQuery( $sql,array("parametro"=>$emailEmbarque) );

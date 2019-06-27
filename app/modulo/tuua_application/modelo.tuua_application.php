@@ -1,5 +1,5 @@
 <?php
-class modeloTuua_application extends MySQL{
+class modeloTuua_application extends Conexion{
 
     public function get_session($sess){
       

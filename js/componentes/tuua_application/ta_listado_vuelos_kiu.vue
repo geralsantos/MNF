@@ -112,18 +112,29 @@ export default {
             confirmButtonText: 'Si'
           }).then((result) => {
             if (result.value) {
+              Swal.fire({
+                title: 'Procesando...',
+                allowOutsideClick:false,
+                allowEscapeKey:false,
+                timer: 20000,
+                onBeforeOpen: () => {
+                  Swal.showLoading();
+                }
+              })
               axios({
                   method: 'POST',
                   url: 'AdpController?view',
                   params: {flag:'ImportarPax',nroVuelo:nroVuelo,Fecha:Fecha,aeroEmbarque:aeroEmbarque,idFileTuua:idFileTuua}
               }).then((response) => {
                   let data = response.data;
+                  Swal.close();
                   Swal.fire(data["result"],data["mensaje"],data["icon"]);
                   self.buscarVuelos();
               })
               .catch((error) => {
                 console.log(error);
-                Swal.fire("error",error,"error");
+                  Swal.close();
+                  Swal.fire("error",error,"error");
               });
             }
           })
@@ -133,6 +144,7 @@ export default {
           //location.href='ta_listado_pax?q='+idFileTuua;
         },
         Reprocesar(idFileTuua,embarque){
+          
           var self = this;
           Swal.fire({
             title: 'Esta seguro que desea reprocesar el manifiesto: '+idFileTuua+' ?',
@@ -144,19 +156,31 @@ export default {
             confirmButtonText: 'Si'
           }).then((result) => {
             if (result.value) {
+              Swal.fire({
+                title: 'Procesando...',
+                allowOutsideClick:false,
+                allowEscapeKey:false,
+                timer: 20000,
+                onBeforeOpen: () => {
+                  Swal.showLoading();
+                }
+              })
               axios({
                   method: 'POST',
                   url: 'AdpController?view',
                   params: {flag:'Reprocesar',id_file:idFileTuua,embarque:embarque}
               }).then((response) => {
                   let data = response.data;
+                  Swal.close();
                   Swal.fire(data["result"],data["mensaje"],data["icon"]);
                   self.buscarVuelos();
               })
               .catch((error) => {
                 console.log(error);
+                Swal.close();
                 Swal.fire("error",error,"error");
               });
+
             }
           })
         },

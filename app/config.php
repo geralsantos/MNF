@@ -47,6 +47,11 @@ define('NOMBRE_BASE_DATOS_PASARELA', 'db_pasarela');
 define('USUARIO_BASE_DATOS_PASARELA', 'userweb');
 define('CLAVE_BASE_DATOS_PASARELA', '#Peru*31x');
 
+define('HOST_BASE_DATOS_PRASYS_PERUVIAN', '172.16.1.4');
+define('NOMBRE_BASE_DATOS_PRASYS_PERUVIAN', 'prasys_peruvian');
+define('USUARIO_BASE_DATOS_PRASYS_PERUVIAN', 'prasys');
+define('CLAVE_BASE_DATOS_PRASYS_PERUVIAN', 'peruvian2825');
+
 define ('NUM_PERPAGE',10);
 
 //RUTA POR DEFECTO

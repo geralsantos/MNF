@@ -1,4 +1,4 @@
 <?php
-class modeloPortada extends MySQL{
+class modeloPortada extends Conexion{
  
 }

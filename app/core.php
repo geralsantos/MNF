@@ -48,8 +48,10 @@ if(isset($_REQUEST['modulo']) and $_REQUEST['modulo'] != '' and ($acceso or $mod
 if (file_exists(APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modulo . ".php")) {
     include_once (APP . DS . 'libreria' . DS . 'funcion.php');
     require_once (APP . DS . 'core' . DS . 'app.class.php');
-    require_once (APP . DS . 'core' . DS . 'mysql.class.php');
-    require_once (APP . DS . 'core' . DS . 'mysqlpasarela.class.php');
+    require_once (APP . DS . 'core' . DS . 'utils.sql.php');
+    require_once (APP . DS . 'core' . DS . 'conexion.class.php');
+    require_once (APP . DS . 'core' . DS . 'conexionpasarela.class.php');
+    require_once (APP . DS . 'core' . DS . 'conexionprasysperuvian.class.php');
     require_once (APP . DS . 'core' . DS . 'plantilla.class.php');
     require_once (APP . DS . 'modulo' . DS . $modulo . DS . "controlador." . $modulo . ".php");
     //UBICAR MODELO
