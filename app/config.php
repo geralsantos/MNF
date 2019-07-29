@@ -37,20 +37,10 @@ define( "RUTA_LOGO", 'https://payload220.cargocollective.com/1/2/87981/6711909/l
 define( "RUTA_IMPRESION", SITE_URL_DIR ."portal/index?id_empresa=2&serie_cor=F001-1&monto=5.00&fecha_emision=2018-08-23" );
 define("TIEMPO_OFERTAR_SUBASTA",3);
 //ACCESO A BASE DE DATOS
-define('HOST_BASE_DATOS', '172.16.1.162');
-define('NOMBRE_BASE_DATOS', 'db_admin');
-define('USUARIO_BASE_DATOS', 'userweb');
-define('CLAVE_BASE_DATOS', '#Peru*31x');
-
-define('HOST_BASE_DATOS_PASARELA', '198.72.112.144');
-define('NOMBRE_BASE_DATOS_PASARELA', 'db_pasarela');
-define('USUARIO_BASE_DATOS_PASARELA', 'userweb');
-define('CLAVE_BASE_DATOS_PASARELA', '#Peru*31x');
-
-define('HOST_BASE_DATOS_PRASYS_PERUVIAN', '172.16.1.4');
-define('NOMBRE_BASE_DATOS_PRASYS_PERUVIAN', 'prasys_peruvian');
-define('USUARIO_BASE_DATOS_PRASYS_PERUVIAN', 'prasys');
-define('CLAVE_BASE_DATOS_PRASYS_PERUVIAN', 'peruvian2825');
+define('HOST_BASE_DATOS', '');
+define('NOMBRE_BASE_DATOS', '');
+define('USUARIO_BASE_DATOS', '');
+define('CLAVE_BASE_DATOS', '');
 
 define ('NUM_PERPAGE',10);
 
