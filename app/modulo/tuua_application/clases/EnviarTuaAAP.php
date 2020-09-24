@@ -277,12 +277,12 @@ class EnviarTuaAAP extends modeloTuua_application{
      $mail = new PHPMailer();
      $mail->IsSMTP(); // send via SMTP
      //$mail->SMTPDebug = 3; //se descomenta en caso quieren ver el mensaje detallado de phpmailer al enviar correo
-     $mail->Host = 'mail.peruvian.pe';
+     $mail->Host = '';
      $mail->Port = 25;
      $mail->SMTPSecure = 'tls';
      $mail->SMTPAuth = true; // turn on SMTP authentication
-     $mail->Username = "ventasweb@peruvian.pe"; // SMTP username
-     $mail->Password = 'ven8065x';
+     $mail->Username = ""; // SMTP username
+     $mail->Password = '';
      $mail->IsHTML(true);
      $de = "ventasweb@peruvian.pe";
      $mail->From = $de;
